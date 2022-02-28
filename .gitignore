@@ -2,6 +2,6 @@ _site
 .sass-cache
 .jekyll-cache
 .jekyll-metadata
-vendor
+vendor/bundle
 assets/css/bootstrap/.jekyll-cache/
 assets/css/bootstrap/_site/
