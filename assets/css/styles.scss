@@ -1,6 +1,23 @@
 ---
 ---
 
+// Font family
+$font-family-base: "Open Sans", sans-serif;
+
+// Custom Colors
+$body-bg: #fffdfa;
+$primary: #2496ed;
+$secondary: #46a033;
+
+$navbar-dark-color: #ffffff;
+
+// Custom Buttons
+$btn-font-size: 14px;
+
+// Custom Heading
+$headings-font-family: "Montserrat", sans-serif;
+$headings-font-weight: 600;
+
 @import "bootstrap/bootstrap";
 
 // mycss

@@ -34,7 +34,7 @@ github_username: mkaucha
 # Enter your Google Analytics web tracking code (e.g. UA-2110908-2) to activate tracking
 #google_analytics: UA-162213875-1
 
-excerpt_separator: <!--continue-->
+excerpt_separator: <!--more-->
 paginate: 9
 paginate_path: "/page:num"
 #permalink: /:title/
