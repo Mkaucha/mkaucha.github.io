@@ -2,7 +2,8 @@
 layout: post
 author: Milan Kaucha
 title: The Secret Lifecycle of Variables
-category: Javascript
+categories: Javascript
+sub-categories: Scope and Closure
 excerpt_separator: <!--more-->
 ---
 

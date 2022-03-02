@@ -1,0 +1,19 @@
+<aside>
+    <ul>
+        {% for category in site.categories %}
+        {% capture category_abc %}{{ category | first }}{% endcapture %}
+        <li>{{ category_abc | slugize }}
+            <ul>
+                {% for post in site.categories[category_abc] %}
+                <li><a href="{{ site.baseurl }}{{ post.url }}">{{post.title}}</a></li>
+                {% endfor %}
+            </ul>
+        {% endfor %}
+        </li>
+    </ul>
+    {% for tag in site.tags %}
+        {% capture tag_abc %}{{ tag | first }}{% endcapture %}
+        {{ tag_abc }}
+    {% endfor %}
+
+</aside>  

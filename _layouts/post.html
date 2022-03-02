@@ -3,9 +3,12 @@ layout: default
 ---
 
 <section class="blog">
-    <div class="container">
+    <div class="container-fluid">
         <div class="row">
-            <div class="col-md-12 blog__content">
+            <div class="col-md-2 blog__sidebar">
+                {% include sidebar.html %}
+            </div>
+            <div class="col-md-10 blog__content">
                 <div class="blog__content-head">
                     <h1>{{ page.title }}</h1>
                     <div class="blog__content-head--brief">

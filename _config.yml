@@ -39,10 +39,6 @@ paginate: 9
 paginate_path: "/page:num"
 #permalink: /:title/
 
-collections:
-  blogs:
-    output: true
-
 # Build settings
 #theme: minima
 plugins:
