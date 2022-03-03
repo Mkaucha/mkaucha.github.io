@@ -1,9 +1,8 @@
 ---
-layout: post
+layout: javascript
 author: Milan Kaucha
 title: What's the scope?
-categories: Javascript
-sub-categories: Scope and Closure
+categories: Scope and Closure
 excerpt_separator: <!--more-->
 ---
 

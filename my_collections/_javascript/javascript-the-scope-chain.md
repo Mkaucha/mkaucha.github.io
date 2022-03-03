@@ -1,9 +1,8 @@
 ---
-layout: post
+layout: javascript
 author: Milan Kaucha
 title: The Scope Chain
-categories: Javascript
-tags: Scope and Closure
+categories: Scope and Closure
 excerpt_separator: <!--more-->
 ---
 

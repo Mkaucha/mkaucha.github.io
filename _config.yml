@@ -68,3 +68,13 @@ exclude:
 sass:
   sass_dir: assets/css/
   style: compressed
+
+collections_dir: my_collections
+
+collections:
+  javascript:
+    output: true
+    permalink: /javascript/:path/
+  django:
+    output: true
+    permalink: /django/:path/

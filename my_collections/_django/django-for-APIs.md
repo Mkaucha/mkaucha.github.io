@@ -1,7 +1,7 @@
 ---
-layout: post
+layout: django
 author: Milan Kaucha
-title: Djangor for APIs
+title: Django for APIs
 categories: Django
 excerpt_separator: <!--more-->
 ---

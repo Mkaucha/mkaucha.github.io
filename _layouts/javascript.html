@@ -1,0 +1,37 @@
+---
+layout: default
+---
+
+<section class="blog">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-2 blog__sidebar">
+            <aside>
+                <ul>
+                {% for javascript in site.javascript %}
+                    <li>
+                    <a href="{{ site.baseurl }}/javascript/{{ javascript.slug }}"
+                        class="{% if page.url contains javascript.slug %} active {% endif %}">
+                        {{ javascript.title }}
+                    </a>
+                    </li>
+                {% endfor %}
+                </ul>
+            </aside>
+            </div>
+            <div class="col-md-10 blog__content">
+                <div class="blog__content-head">
+                    <h1>{{ page.title }}</h1>
+                    <div class="blog__content-head--brief">
+                        <span>Category: {{ page.category }}</span>
+                        <span>Published On: {{ page.date | date: '%B %d, %Y' }}</span>
+                        <span>Author: {{ page.author }}</span> 
+                    </div>
+                </div>
+                <div class="blog__content-body">
+                    {{ content }}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
