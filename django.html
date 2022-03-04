@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Blog
+title: Django
 ---
 
 <section class="blogwrap">
@@ -8,23 +8,21 @@ title: Blog
         <div class="row">
             <div class="col-md-12 blogwrap__card">
                 <div class="row">
-                    {% for collection in site.collections %}
-                    {% if collection.label != "posts" %}
+                    {% for django in site.django reversed %}
                     <div class="col-lg-3 col-md-4 blogwrap__card-wrap">
                         <div class="card">
                             <!-- <img src="..." class="card-img-top" alt="..."> -->
                             <div class="card-body blogwrap__card-body">
-                                <h5>{{ collection.label | capitalize }}</h5>
-                                <!-- <div class="blogwrap__card-body--brief d-flex justify-content-between">
-                                    <span>{{ post.categories }}</span>
-                                    <span>{{ post.date | date: '%B %d, %Y' }}</span>
-                                </div> -->
+                                <h5>{{ django.title }}</h5>
+                                <div class="blogwrap__card-body--brief d-flex justify-content-between">
+                                    <span>{{ javascript.categories }}</span>
+                                </div>
                                 <p>{{ post.excerpt | strip_html | truncate: 50}}</p>
-                                <a href="{{ site.url }}/{{ collection.label }}.html" class="btn btn-secondary">View More</a>
+                                <a href="{{ django.url }}" class="btn btn-secondary">View
+                                    More</a>
                             </div>
                         </div>
                     </div>
-                    {% endif %}
                     {% endfor %}
                 </div>
             </div>

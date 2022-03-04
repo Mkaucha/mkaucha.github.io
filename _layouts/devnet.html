@@ -8,11 +8,11 @@ layout: default
             <div class="col-md-2 blog__sidebar">
                 <aside>
                     <ul>
-                        {% for django in site.django %}
+                        {% for devnet in site.devnet_associate reversed %}
                         <li>
-                            <a href="{{ site.baseurl }}/django/{{ django.slug }}"
+                            <a href="{{ devnet.baseurl }}/devnet_associate/{{ devnet.slug }}"
                                 class="{% if page.url contains django.slug %} active {% endif %}">
-                                {{ django.title }}
+                                {{ devnet.title }}
                             </a>
                         </li>
                         {% endfor %}

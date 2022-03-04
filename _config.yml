@@ -76,3 +76,5 @@ collections:
     output: true
   django:
     output: true
+  devnet_associate:
+    output: true
