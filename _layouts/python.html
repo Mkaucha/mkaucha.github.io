@@ -1,29 +1,28 @@
 ---
 layout: default
 ---
-
 <section class="blog">
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-2 blog__sidebar">
                 <aside>
                     <ul>
-                        {% for django in site.django %}
+                        {% for python in site.python reversed %}
                         <li>
-                            <a href="{{ site.baseurl }}/django/{{ django.slug }}"
-                                class="{% if page.url contains django.slug %} active {% endif %}">
-                                {{ django.title }}
+                            <a href="{{ site.baseurl }}/python/{{ python.slug }}"
+                                class="{% if page.url contains python.slug %} active {% endif %}">
+                                {{ python.title }}
                             </a>
                         </li>
                         {% endfor %}
                     </ul>
                 </aside>
             </div>
-            <div class="col-md-8 blog__content">
+            <div class="col-md-10 blog__content">
                 <div class="blog__content-head">
                     <h1>{{ page.title }}</h1>
                     <div class="blog__content-head--brief">
-                        <span>Category: {{ page.categories }}</span>
+                        <span>Category: {{ page.categories | join: ' ' }}</span>
                         <span>Author: {{ page.author }}</span>
                     </div>
                 </div>
@@ -31,9 +30,6 @@ layout: default
                     {{ content }}
                 </div>
             </div>
-
-            <div class="col-md-2 blog__navigation"></div>
-
         </div>
     </div>
 </section>

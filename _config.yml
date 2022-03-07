@@ -74,7 +74,13 @@ collections_dir: my_collections
 collections:
   javascript:
     output: true
+    permalink: /javascript/:path/
   django:
     output: true
+    permalink: /django/:path/
   devnet_associate:
     output: true
+    permalink: /devnet_associate/:path/
+  python:
+    output: true
+    permalink: /python/:path/

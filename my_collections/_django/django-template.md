@@ -6,6 +6,10 @@ categories: Django
 excerpt_separator: <!--more-->
 ---
 
+###### on this page
+
+[Using the template system](#section-1)
+
 A Django template is a string of text that is intended to seperate the presentation of a document from its data. A template defines placeholders and various bits of basic logic that regulates how the document should be displayed.
 
 <!--more-->
@@ -21,7 +25,7 @@ The template is basic HTML with some variables and template tags. Let's step thr
 
 - Template contains filter, which is the most convenient way to alter the formatting of a variable. {{ ship_date\|date:"F j, Y" }}, we're passing the ship_date variable to the date filter, giving the date filter the argument "F j, Y". Filters are attached using a pipe character (\|), as a reference to Unix pipes.
 
-#### Using the template system
+#### Using the template system {#section-1}
 
 Django ships with a build-in backend for its own template system the **Django Template Lanugage (DTL)**. Django's template system in Python code:
 
@@ -237,6 +241,7 @@ Method calls are slightly more complex than the other lookup types. Here are som
 1. If, during the method lookup, a method raises an exception, the exception will be
    propagated, unless the exception has an attribute **silent_variable_failure**
    whose value is **True**. If the exception does have a **silent_variable_failure** attribute, the variable will render as the value of the engine's **string_if_invalid** configuration option (an empty string, by default)
+
       <pre>
       <code>
          >>> t = Template("My name is {{ person.first_name }}.")
@@ -258,6 +263,7 @@ Method calls are slightly more complex than the other lookup types. Here are som
         'My name is .'
       </code>
       </pre>
+
 2. By design, Django intentionally limits the amount of logic processing available in
    the template, so it's not possible to pass arguments to method calls accessed from
    within templates. Data should be calculated in views and then passed to

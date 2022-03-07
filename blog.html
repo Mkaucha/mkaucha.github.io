@@ -6,28 +6,52 @@ title: Blog
 <section class="blogwrap">
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-12 blogwrap__card">
-                <div class="row">
-                    {% for collection in site.collections %}
-                    {% if collection.label != "posts" %}
-                    <div class="col-lg-3 col-md-4 blogwrap__card-wrap">
-                        <div class="card">
-                            <!-- <img src="..." class="card-img-top" alt="..."> -->
-                            <div class="card-body blogwrap__card-body">
-                                <h5>{{ collection.label | capitalize }}</h5>
-                                <!-- <div class="blogwrap__card-body--brief d-flex justify-content-between">
-                                    <span>{{ post.categories }}</span>
-                                    <span>{{ post.date | date: '%B %d, %Y' }}</span>
-                                </div> -->
-                                <p>{{ post.excerpt | strip_html | truncate: 50}}</p>
-                                <a href="{{ site.url }}/{{ collection.label }}.html" class="btn btn-secondary">View More</a>
+
+            <div class="col-md-6 blogwrap__card">
+                <div class="card">
+                    <h5>Web Development</h5>
+                    <div class="card-body blogwrap__card-body">
+                        <div class="row">
+                            <div class="col-md-2 blogwrap__card-wrap">
+                                    <a href ="javascript.html">
+                                        <img src="/assets/images/js.png">
+                                    </a>
+                                    <h6>Javascript</h6>
+                            </div>
+                            <div class="col-md-2 blogwrap__card-wrap">
+                                    <a href="django.html">
+                                        <img src="/assets/images/django.png">
+                                    </a>
+                                    <h6>Django</h6>
+                            </div>
+                            <div class="col-md-2 blogwrap__card-wrap">
+                                <a href="vuejs.html">
+                                    <img src="/assets/images/vuejs.png">
+                                </a>
+                                <h6>Vuejs</h6>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 blogwrap__card">
+                <div class="card">
+                    <h5>Programming Tutorials</h5>
+                    <div class="card-body blogwrap__card-body">
+                        <div class="row">
+                            <div class="col-md-2 blogwrap__card-wrap">
+                                <a href="python.html">
+                                    <img src="/assets/images/python.png">
+                                </a>
+                                <h6>Python</h6>
                             </div>
                         </div>
                     </div>
-                    {% endif %}
-                    {% endfor %}
                 </div>
             </div>
+
         </div>
     </div>
 </section>
