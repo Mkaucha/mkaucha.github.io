@@ -2,7 +2,7 @@
 layout: javascript
 author: Milan Kaucha
 title: Illustrating Lexical Scope
-categories: Scope and Closure
+categories: Javascript
 excerpt_separator: <!--more-->
 ---
 

@@ -2,7 +2,7 @@
 layout: javascript
 author: Milan Kaucha
 title: Around the Global Scope
-categories: Scope and Closure
+categories: Javascript
 excerpt_separator: <!--more-->
 ---
 

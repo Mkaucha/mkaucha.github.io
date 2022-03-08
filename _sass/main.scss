@@ -20,33 +20,67 @@
   }
 }
 
+section {
+  margin-top: 57px;
+}
+
 /**************************** Blog Page **************************************/
-.blogwrap {
+.homewrap {
+  &__sidenav {
+    margin-top: 30px;
+
+    &-block {
+      margin-bottom: 30px;
+    }
+    li {
+      padding: 0;
+      a {
+        display: block;
+        padding: 0.5rem 1rem;
+        text-decoration: none;
+        color: inherit;
+        &:hover {
+          color: $primary;
+        }
+      }
+    }
+  }
+
+  &__cardwrap {
+    margin-top: 30px;
+    a {
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      border-radius: 15px;
+      &:hover {
+        box-shadow: 2px 2px 13px -5px rgba(0, 0, 0, 0.125);
+      }
+    }
+  }
+
   &__card {
-    margin: 30px 0;
+    border-radius: 15px;
+
+    &:not(last-child) {
+      margin-bottom: 30px;
+    }
 
     h5 {
       font-weight: 600;
-      background-color: #fafafa;
-      padding: 15px;
-      color: #808080;
-    }
-    &-wrap {
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      align-items: center;
-      h6 {
-        margin-top: 0.5rem;
-      }
     }
 
     &-body {
-      box-shadow: 2px 10px 10px -2px rgba(0, 0, 0, 0.125);
-
+      background-color: darken(#fffdfa, 1%);
+      border-radius: 15px;
       &--brief {
-        font-size: 14px;
         margin-bottom: 1rem;
+
+        span {
+          margin-right: 30px;
+          color: $primary;
+          font-weight: 600;
+        }
       }
     }
   }
