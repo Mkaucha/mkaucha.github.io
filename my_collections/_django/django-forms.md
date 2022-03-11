@@ -174,7 +174,7 @@ You can make sure the data is being submitted to Django properly. In short:
 >
 > Use **POST** whenever the act of submitting the form will have some effect - **changing data, or sending e-mail, or something else that's beyond simple display of data**.
 
-##### mysite/books/views.py
+###### mysite/books/views.py
 
 <pre>
 <code>
@@ -521,5 +521,294 @@ appropriate Python types:
 
 Our contact form only deals with strings, which are "cleaned" into string objects – but if we
 were to use an **IntegerField** or **DateField**, the forms framework would ensure that **cleaned_data** used proper Python integers or **datetime.date objects** for the given fields.
+
+#### 4. Tying form objects into views
+
+Our contact form is not much good to us unless we display it to the user.
+
+###### mysite/contact/views.py
+
+<pre>
+<code>
+    from django.shortcuts import render
+    from mysite.forms import ContactForm
+    from django.http import HttpResponseRedirect
+    from django.core.mail import send_mail
+
+    def contact(request):
+        if request.method == 'POST':
+            form = ContactForm(request.POST)
+            if form.is_valid():
+                cd = form.clean_data
+                send_mail(
+                    cd ['subject'],
+                    cd['message'],
+                    cd.get('email', 'noreply@example.com'), ['siteowner@example.com'],
+                )
+                return HttpResponseRedirect('/contact/thanks/')
+        else:
+            form = ContactForm()
+        return render(request, 'contact_form.html', {'form': form}) 
+</code>
+</pre>
+
+Next, we have to create our contact form
+
+###### mysite/contact/templates/contact_form.html
+
+<pre>
+<code>
+    < html >
+    < head >
+    < title >Contactus</title>
+        </head>
+    < body >
+        < h1 >Contactus</h1>
+        {% if form.errors %}
+            < p style="color: red;" >
+                Please correct the error{{ form.errors|pluralize }} below.
+            </p>
+        {% endif %}
+        < form action="" method="post" >
+            < table >
+                {{ form.as_table }}
+            </table>
+                {% csrf_token %}
+            < input type="submit" value="Submit" >
+        </form>
+    </body>
+    </html>
+</code>
+</pre>
+
+And finally, we need to change our **urls.py** to display our contact form at **/contact/**:
+
+<pre>
+<code>
+    # ...
+    from mysite.views import hello, current_datetime, hours_ahead, contact
+    
+    urlpatterns = [
+        # ...
+        url(r'^contact/$', contact),
+    ]
+</code>
+</pre>
+
+Since we're creating a **POST** form, we need to worry about **Cross Site Request Forgeries**. Django comes with a very easy-to-use system for protecting against it. In short, all **POST** forms that are targeted at internal URLs should use the {% csrf_token %} template tag.
+
+unless you have configured a mail-server, you will get a **ConnectionRefusedError** when **send_mail()** is called.
+
+#### 5. Changing how fields are rendered
+
+We render our form locally is that the message field is displayed as an **\<input type="text">**, and it ought to be a **\<textarea>**. We can fix that by setting the **field's widget**:
+
+###### mysite/contact/forms.py
+
+<pre>
+<code>
+    from django import forms
+
+    class ContactForm(forms.Form):
+        subject = forms.Charfield()
+        email = forms.EmailField(required=False)
+        message = forms.CharField(widget=forms.Textarea)
+</code>
+</pre>
+
+The forms framework separates out the presentation logic for each field into set of widgets. Each field type has a default widget, but can easily override the default, or provide custom widget of your own.
+
+Think of the **Field** classes as representing **validation logic**, while widgets represent **presentation logic**.
+
+#### 6. Setting a maximum length
+
+One of the common validation needs is to check that a field is of a certain size. To do that, use **max_length** to the Field.
+
+###### mysite/contact/forms.py
+
+<pre>
+<code>
+    from django import forms
+
+    class ContactForm(forms.Form):
+        subject = forms.CharField(max_length=100)
+        email = forms.EmailField(required=False)
+        message = form.CharField(widget=forms.Textarea)
+</code>
+</pre>
+
+#### 7. Setting initial values
+
+To add an initial value, we can use **initial** argument when we create **Form** instance.
+
+###### mysite/contact/views.py
+
+<pre>
+<code>
+    def contact(request):
+        if request.method == 'POST':
+            form = ContactForm(request.POST)
+            if from.is_valid():
+                cd = form.cleaned_data
+                send_mail(
+                    cd['subject'],
+                    cd['message'],
+                    cd.get('email', 
+                    ['noreply@example.com](mailto:'noreply%40example.com)'),
+                    [['siteowner@example.com](mailto:'siteowner%40example.com)'],
+                    )
+                return HttpResponseRedirect('/contact/thanks/')
+        else:
+            form = ContactForm(
+                initial = {'subject': 'I love your site!'}
+            )
+        return render(request, 'contact_form.html', {'form': form})
+</code>
+</pre>
+
+Now, the **subject** field will be displayed prepopulated with that kind statement.
+
+> Note:
+>
+> The biggest difference is that if you're just passing initial data, then the form will be unbound, which means it won't have any error messages.
+
+#### 8. Custom validation rules
+
+There are number of ways to hook custom validation into a Django form. Most custom validations are one-off affairs, though, and can be tied directly to the **FORM** class.
+
+###### mysite/contact/forms.py
+
+<pre>
+<code>
+    from django import forms
+
+    class ContactForm(forms.Form):
+        subject = forms.CharField(max_length=100)
+        email = forms.EmailField(required=false)
+        message = forms.CharField(widget=forms.Textarea)
+
+        def clean_meassage(self):
+            message = self.cleaned_data['message']
+            num_words = len(message.split())
+
+            if num_words < 4:
+                raise forms.ValidationError('Not enough words!')
+            return message
+</code>
+</pre>
+
+Django's form system automatically looks for any method whose name starts with **clean\_** and ends with the name of a **field**. If any such method exists, it's called during validation.
+
+Here, the **clean_message()** method will be called after the default validation logic for a given field (in this case, the validation logic for a required **CharField**).
+
+Because the field data has already been partially processed, we pull it out of **self.cleaned_data**. Also, we don't have to worry about checking that the value exists and is non-empty; that's done by the default validator. We naively use a combination of **len()** and **split()** to count the number of words. If the user has entered too few words, we raise a **forms.ValidationError**.
+
+#### 9. Specifying labels
+
+By default, the labels on Django's auto-generated form HTML are created by replacing underscores with spaces and capitalizing the first letter–so the label for the email field is "Email".
+
+we can customize the label for a given field using **label**.
+
+###### mysite/contact/forms.py
+
+<pre>
+<code>
+    class ContactForm(forms.Form):
+        subject = forms.CharField(max_length=100)
+        email = forms.EmailField(required=False, label='Your e-mail address')
+        message = forms.CharField(widget=forms.Textarea)
+</code>
+</pre>
+
+#### 10. Customizing form design
+
+Our **contact_form.html** template uses **{{ form.as_table }}** to display the form, but we can display the form in other ways to get more granular control over display.
+
+The auto-generated error lists use **\<ul class="errorlist">** precisely so that you can target them with CSS.
+
+###### mysite/contact/templates/contact_form.html
+
+<pre>
+<code>
+    < style type="text/css" >
+        ul.errorlist {
+            margin: 0;
+            padding: 0;
+        }
+        .errorlist li {
+            background-color: red;
+            color: white;
+            display: block;
+            font-size: 10px;
+            margin: 0 0 3px;
+            padding: 4px 5px;
+        }
+    </style>
+</code>
+</pre>
+
+In many cases we'll want to override the default rendering of form's HTML. Everything about the way a form is displayed can be overridden, mostly within template itself.
+
+Each field's widget **(\<input type="text">, \<select>, \<textarea>, and so on.)** can be rendered individually by accessing {{ form.fieldname }} in the template, and any errors associated with a field are available as **{{ form.fieldname.errors }}**.
+
+###### mysite/contact/templates/contact_form.html
+
+<pre>
+<code>
+    < html >
+    < head >
+        < title >Contact us</title>
+    </head>
+    < body >
+    < h1 >Contact us</h1>
+    {% if form.errors %}
+    < p style="color: red;" >
+        Please correct the error{{ form.errors|pluralize }} below.
+    </p>
+    {% endif %}
+    < form action="" method="post" >
+        < div class="field" >
+            {{ form.subject.errors }}
+        < label for="id_subject" >Subject:</label>
+            {{ form.subject }}
+        </div>
+        < div class="field" >
+            {{ form.email.errors }}
+        < label for="id_email" >Your e-mail address:</label>
+            {{ form.email }}
+        </div>
+        < div class="field" >
+            {{ form.message.errors }}
+        < label for="id_message" >Message:</label>
+            {{ form.message }}
+        </div>
+        {% csrf_token %}
+        < input type="submit" value="Submit" >
+    </form>
+    </body>
+    </html>
+</code>
+</pre>
+
+**{{ form.message.errors }}** displays a **\<ul class="errorlist">** if errors are present
+and a blank string if the field is valid (or the form is unbound). We can also treat **form.message.errors** as a Boolean or even iterate over it as a list.
+
+<pre>
+<code>
+    < div class="field{% if form.message.errors %} errors{% endif %}" >
+        {% if form.message.errors %}
+    < ul >
+    {% for error in form.message.errors %}
+    < li >{{ error }}</li>
+        {% endfor %}
+    </ul>
+        {% endif %}
+    < label for="id_message" >Message:</label>
+        {{ form.message }}  
+    </div>
+</code>
+</pre>
+
+This will add an **"errors"** class to the containing **\<div>** and display the list of errors in an unordered list.
 
 {% endraw %}

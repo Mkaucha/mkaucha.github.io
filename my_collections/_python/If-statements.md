@@ -213,4 +213,261 @@ Boolean values provide an efficient way to track the state of a program or a par
 </code>
 </pre>
 
+#### 3. If statement
+
+##### Simple if Statement
+
+The simplest kind of if statement has one test and one action:
+
+<pre>
+<code>
+    if conditional_test:
+        do something
+</code>
+</pre>
+
+Here, if the **conditional_test** evaluates to True, Python executes the code folllowing the if statement. If the test evaluates to False, Python ignores the code following the if statement.
+
+###### voting.py
+
+<pre>
+<code>
+    age = 19
+    if age >= 18:
+        print("You are old enough to vote!")
+    
+    ''' Output:
+        You are old enough to vote '''
+</code>
+</pre>
+
+All indented lines after an if statement will be executed if the test passes, and the entire block of intended lines will be ignored if the test does not pass.
+
+##### if-else Statements
+
+An if-else block is similar to simple if statement, but the else statement allows you to define an action or set of actions that are executed when the conditional test fails.
+
+<pre>
+<code>
+    age = 17
+    if age >= 18:
+        print("You are old enough to vote!")
+        print("Have you register to vote yet?")
+    else:
+        print("Sorry, you are too young to vote.")
+        print("Please register to vote as soon as you turn 18!")
+
+    ''' Output:
+        Sorry, you are too young to vote.
+        Please register to vote as soon as you turn 18! ''' 
+</code>
+</pre>
+
+##### The if-elif-else Chain
+
+If you need to test more than two possible situations, and to evaluate these you can use Python's **if-elif-else** syntax. Python executes only one block in an if-elif-else chain. It runs each conditional test in order until one passes. When a test passes, the code following that test is executed and Python skips the rest of the tests.
+
+###### amusement_park.py
+
+<pre>
+<code>
+    age = 12
+
+    if age < 4:
+        print("Your admission cost is $0.")
+    if age < 18:
+        print("Your admission cost is $25.")
+    else:
+        print("Your admission cost is $40.") 
+
+    ''' Output: 
+        Your admission cost is $25. '''
+</code>
+</pre>
+
+It would be more concise to set just the price inside **if-elif-else** chain.
+
+<pre>
+<code>
+    age = 12
+
+    if age < 4:
+        price = 0
+    elif age < 18
+        price = 25
+    else:
+        price = 40
+
+    print(f"Your admission cost is ${price}.")
+</code>
+</pre>
+
+##### Using Multiple elif Blocks
+
+You can use as many elif blocks in your code as you like.
+
+<pre>
+<code>
+    age = 12 
+    if age < 4: 
+        price = 0 
+    elif age < 18: 
+        price = 25 
+    elif age < 65:
+        price = 40
+    else:
+        price = 20
+    print(f"Your admission cost is ${price}.") 
+</code>
+</pre>
+
+##### Omitting the else Block
+
+Python does not require an else block at the end of an **if-elif** chain.
+
+<pre>
+<code>
+    age = 12
+    if age < 4:
+        price = 0
+    elif age < 18:
+        price = 25
+    elif age < 65:
+        price = 40
+    elif age >= 65:
+        price = 20
+
+    print(f"Your admission cost is ${price}.") 
+</code>
+</pre>
+
+##### Testing Multiple Conditions
+
+Sometimes it’s important to check all of the conditions of interest. In this case, you should use a series of simple **if** statements with no **elif** or **else** blocks.
+
+###### toppings.py
+
+<pre>
+<code>
+    requested_toppings = ['mushrooms', 'extra cheese']
+
+    if 'mushrooms' in requested_toppings:
+        print('Adding mushrooms.')
+    if 'pepperoni' in requested_toppings:
+        print("Adding pepperoni.")
+    if 'extra cheese' in requested_toppings:
+        print("Adding extra cheese.")
+
+    ''' Output: 
+        Adding mushrooms.
+        Adding extra cheese. '''
+</code>
+</pre>
+
+If we use an **if-elif-else** block, the code would stop running after only one test passes.
+
+###### toppings.py
+
+<pre>
+<code>
+    requested_toppings = ['mushrooms', 'extra cheese']
+
+    if 'mushrooms' in requested_toppings:
+        print('Adding mushrooms.')
+    elif 'pepperoni' in requested_toppings:
+        print("Adding pepperoni.")
+    elif 'extra cheese' in requested_toppings:
+        print("Adding extra cheese.")
+
+    ''' Output: 
+        Adding mushrooms. '''
+</code>
+</pre>
+
+#### 4. Using if Statements with Lists
+
+We can watch for special values that need to be treated differently than other values in the list. We can manage changing conditions efficiently.
+
+###### toppings.py
+
+<pre>
+<code>
+    requested_toppings = ['mushrooms', 'green peppers', 'extra cheese']
+
+    for requested_topping in requested_toppings:
+        if requested_topping == 'green peppers':
+            print("Sorry, we are out of green peppers right now.")
+        else:
+            print(f"Adding ${requested_topping}")
+    
+    print("\nFinished making your pizza!") 
+
+    ''' Output: 
+        Adding mushrooms. 
+        Sorry, we are out of green peppers right now.
+        Adding extra cheese. 
+
+        Finished making your pizza! '''
+</code>
+</pre>
+
+##### Checking That a List Is Not Empty
+
+It’s useful to check whether a list is empty before running a for loop.
+
+###### toppings.py
+
+<pre>
+<code>
+    requested_toppings = []
+
+    if requested_toppings:
+        for requested_topping in requested_toppings:
+            print(f"Adding ${requested_topping}")
+            print("\nFinished making your pizza!")
+    else:
+        print("Are you sure you want a plain pizza?") 
+
+    ''' Output: 
+        Are you sure you want a plain pizza? '''
+</code>
+</pre>
+
+##### Using Multiple Lists
+
+###### toppings.py
+
+<pre>
+<code>
+    available_toppings = ['mushrooms', 'olives', 'green peppers',
+                          'pepperoni', 'pineapple', 'extra cheese']
+    requested_toppings = ['mushrooms', 'french fries', 'extra cheese']
+
+    for requested_topping in requested_toppings:
+        if requested_topping in available_toppings:
+            print(f"Adding ${requested_topping}")
+    else:
+        print(f"Sorry, we don't have {requested_topping}.")
+
+    print("\nFinished making your pizza!")
+
+    ''' Output: 
+        Adding mushrooms.
+        Sorry, we don't have french fries.
+        Adding extra cheese. 
+        
+        Finished making your pizza! '''
+</code>
+</pre>
+
+#### 5. Styling Your if Statements
+
+The only recommendation **PEP 8** provides for styling conditional tests is to use a single space around comparison operators, such as **==, >=, <=**.
+
+<pre>
+<code>
+    # if age < 4: is better than if age<4:
+</code>
+</pre>
+
 {% endraw %}
