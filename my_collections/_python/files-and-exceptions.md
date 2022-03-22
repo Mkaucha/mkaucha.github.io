@@ -1,5 +1,5 @@
 ---
-layout: python
+layout: blogdetail
 author: Milan Kaucha
 title: Files and Exceptions
 categories: Python

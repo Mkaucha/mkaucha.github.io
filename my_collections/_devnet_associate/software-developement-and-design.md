@@ -1,5 +1,5 @@
 ---
-layout: devnet
+layout: blogdetail
 author: Milan Kaucha
 title: Software Development and Design
 categories: Cisco DevNet Associates

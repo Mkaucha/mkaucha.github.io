@@ -1,23 +1,10 @@
 ---
 layout: default
 ---
+
 <section class="blog">
     <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-2 blog__sidebar">
-                <aside>
-                    <ul>
-                        {% for python in site.python reversed %}
-                        <li>
-                            <a href="{{ site.baseurl }}/python/{{ python.slug }}"
-                                class="{% if page.url contains python.slug %} active {% endif %}">
-                                {{ python.title }}
-                            </a>
-                        </li>
-                        {% endfor %}
-                    </ul>
-                </aside>
-            </div>
+        <div class="row justify-content-end">
             <div class="col-md-10 blog__content">
                 <div class="blog__content-head">
                     <h1>{{ page.title }}</h1>
@@ -29,6 +16,17 @@ layout: default
                 <div class="blog__content-body">
                     {{ content }}
                 </div>
+            </div>
+            <div class="col-md-2 blog__sidebar">
+                <aside>
+                    <ul>
+                        <li>
+                            <a href="" class="">
+                                
+                            </a>
+                        </li>
+                    </ul>
+                </aside>
             </div>
         </div>
     </div>

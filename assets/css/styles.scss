@@ -2,12 +2,11 @@
 ---
 
 // Font family
-$font-family-base: "Open Sans", sans-serif;
+$font-family-base: "Poppins", sans-serif;
 
 // Custom Colors
 $body-bg: #fffdfa;
-$primary: #2496ed;
-$secondary: #46a033;
+$primary: #3b5998;
 
 $navbar-dark-color: #ffffff;
 
@@ -17,7 +16,6 @@ $link-color: $primary;
 $btn-font-size: 14px;
 
 // Custom Heading
-$headings-font-family: "Montserrat", sans-serif;
 $headings-font-weight: 600;
 
 @import "bootstrap/bootstrap";

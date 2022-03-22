@@ -11,67 +11,6 @@ title: Home
     <title>{{ page.title }}</title>
 </head>
 <body>
-    <section class="homewrap">
-        <div class="container">
-            <div class="row">
-    
-                <div class="col-md-8 homewrap__cardwrap">
-                    {% for docs in site.documents reversed limit: 5%}
-                        <a href="{{ docs.url }}">
-                        <div class="card homewrap__card">
-                            <div class="card-body homewrap__card-body">
-                                <h4>{{ docs.title }}</h4>
-                                <div class="homewrap__card-body--brief">
-                                    <span>Category: {% for category in docs.categories %}
-                                        {{ category }}
-                                    {% endfor %}</span>
-                                   <span>Author: {{ docs.author}} </span>
-                                   <p>{{ docs.excerpt }}</p>
-                                </div>
-                            </div>
-                        </div>
-                        </a>
-                    {% endfor %}
-                </div>
 
-                <div class="col-md-4 homewrap__sidenav">
-                    <div class="homewrap__sidenav-block">
-                        <h5>Python</h5>
-                        <ul class="list-group">
-                            {% for docs in site.python %}
-                                    <li class="list-group-item">
-                                        <a href="{{ docs.url }}">{{ docs.title }}</a>
-                                    </li>
-                            {% endfor%}
-                        </ul>
-                    </div>
-                    <div class="homewrap__sidenav-block">
-                        <h5>Django</h5>
-                        <ul class="list-group">
-                            {% for docs in site.django %}
-                            <li class="list-group-item">
-                                <a href="{{ docs.url }}">{{ docs.title }}</a>
-                            </li>
-                            {% endfor%}
-                        </ul>
-                    </div>
-
-                    <div class="homewrap__sidenav-block">
-                        <h5>Javascript</h5>
-                        <ul class="list-group">
-                            {% for docs in site.javascript %}
-                            <li class="list-group-item">
-                                <a href="{{ docs.url }}">{{ docs.title }}</a>
-                            </li>
-                            {% endfor%}
-                        </ul>
-                    </div>
-                </div>
-
-
-    
-            </div>
-        </div>
-    </section>
 </body>
 </html>

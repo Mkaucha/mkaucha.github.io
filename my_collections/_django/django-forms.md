@@ -1,5 +1,5 @@
 ---
-layout: django
+layout: blogdetail
 author: Milan Kaucha
 title: Django Forms
 categories: Django

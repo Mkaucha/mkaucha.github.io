@@ -1,0 +1,116 @@
+---
+layout: default
+title: Blogs
+---
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page.title }}</title>
+</head>
+
+<body>
+    <section class="blog__wrap">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="tab">
+                        <button class="tablinks btn btn-primary" onclick="openBlog(event, 'Devnet')" id="defaultOpen">DevNet</button>
+                        <button class="tablinks btn btn-primary" onclick="openBlog(event, 'Javascript')" id="defaultOpen">Javascript</button>
+                        <button class="tablinks btn btn-primary" onclick="openBlog(event, 'Python')">Python</button>
+                        <button class="tablinks btn btn-primary" onclick="openBlog(event, 'Django')">Django</button>
+                    </div>
+                </div>
+                <div class="col-md-12">
+
+                    <div id="Devnet" class="tabcontent">
+                        <div class="row">
+                            {% for doc in site.devnet_associate %}
+                            <div class="col-md-4 blog__wrap-block">
+                                <a href="{{ doc.url }}">
+                                    <div class="card">
+                                        <img src="/assets/images/devnet.jpg" alt="...">
+                                        <div class="card-body">
+                                            <span>{{ doc.categories | join: ' '}}</span> - <em>July 2, 2022</em>
+                                            <h5>{{ doc.title }}</h5>
+                                            <p>{{ doc.excerpt | strip_html | strip_newlines | truncate: 156}}</p>
+                                            <!-- <h6>Author: {{ document.author }}</h6> -->
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div id="Javascript" class="tabcontent">
+                        <div class="row">
+                            {% for doc in site.javascript %}
+                            <div class="col-md-4 blog__wrap-block">
+                                <a href="{{ doc.url }}">
+                                    <div class="card">
+                                        <img src="/assets/images/js.jpg" alt="...">
+                                        <div class="card-body">
+                                            <span>{{ doc.categories | join: ' '}}</span> - <em>July 2, 2022</em>
+                                            <h5>{{ doc.title }}</h5>
+                                            <p>{{ doc.excerpt | strip_html | strip_newlines | truncate: 156}}</p>
+                                            <!-- <h6>Author: {{ document.author }}</h6> -->
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    <div id="Python" class="tabcontent">
+                        <div class="row">
+                            {% for doc in site.python %}
+                            <div class="col-md-4 blog__wrap-block">
+                                <a href="{{ doc.url }}">
+                                    <div class="card">
+                                        <img src="/assets/images/python.jpg" alt="...">
+                                        <div class="card-body">
+                                            <span>{{ doc.categories | join: ' '}}</span> - <em>July 2, 2022</em>
+                                            <h5>{{ doc.title }}</h5>
+                                            <p>{{ doc.excerpt | strip_html | strip_newlines | truncate: 156}}</p>
+                                            <!-- <h6>Author: {{ document.author }}</h6> -->
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <div id="Django" class="tabcontent">
+                    <div class="row">
+                        {% for doc in site.django %}
+                        <div class="col-md-4 blog__wrap-block">
+                            <a href="{{ doc.url }}">
+                                <div class="card">
+                                    <img src="/assets/images/django.png" alt="...">
+                                    <div class="card-body">
+                                        <span>{{ doc.categories | join: ' '}}</span> - <em>July 2, 2022</em>
+                                        <h5>{{ doc.title }}</h5>
+                                        <p>{{ doc.excerpt | strip_html | strip_newlines | truncate: 156}}</p>
+                                        <!-- <h6>Author: {{ document.author }}</h6> -->
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+</body>
+
+</html>
