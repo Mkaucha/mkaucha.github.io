@@ -10,9 +10,11 @@ excerpt_separator: <!--more-->
 
 When we write a class, we define general behavior that a whole category of object can have. Making an object from a class is called **instantiation**.
 
+{:.page_link}
+
 {% raw %}
 
-#### 1. Creating and Using a Class
+#### 1. Creating and Using a Class {#section-1}
 
 We can model almost anything using **classes**.
 
