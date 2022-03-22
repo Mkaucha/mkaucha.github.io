@@ -149,7 +149,7 @@
 /* Style the buttons inside the tab */
 .tab button {
   transition: 0.2s;
-  margin-right: 15px;
+  margin: 0 15px 15px 0;
   background: #ffffff;
   color: rgb(33, 37, 41);
   border: 1px solid rgb(33, 37, 41);
@@ -183,5 +183,8 @@
 @media only screen and (max-width: 767px) {
   .blog__content {
     padding: 30px 15px;
+  }
+  .blog__wrap-block {
+    padding: 0 15px;
   }
 }
