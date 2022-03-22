@@ -57,3 +57,17 @@ Here’s a simple function that takes in a first and last name, and returns a ne
     '''
 </code>
 </pre>
+
+Python provides an efficient way to automate the testing of a function’s output. If we automate the testing of **get_formatted_name()**, we can always be confident that the function will work when given the kinds of names we’ve written tests for.
+
+##### Unit Tests and Test Cases
+
+The **module unittest** from the Python standard library provides tools for testing your code. A **unit test** verifies that one specific aspect of a function's behavior is correct.
+
+A **test case** is a collection of **unit tests** that together prove that a function behaves as it’s supposed to, within the full range of situations you expect it to handle.
+
+A **good test case** considers all the possible kinds of input a function could receive and includes tests to represent each of these situation. A test case with **full coverage** includes a full range of **unit tests** covering all the possible ways we can use a function.
+
+> Note:
+>
+> Its's often good enough to write tests for our code's critical behaviors and then aim for full coverage only if the project starts to see widespread use.

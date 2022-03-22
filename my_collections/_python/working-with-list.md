@@ -6,6 +6,8 @@ categories: Python
 excerpt_separator: <!--more-->
 ---
 
+We'll often want to run through all entries in a list, performing the same task with each item. When we want to do the same action with every item in a list, we can use Python's for loop.
+
 #### 1. Looping Through an Entire List
 
 ###### magician.py

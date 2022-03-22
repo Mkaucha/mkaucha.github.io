@@ -79,4 +79,15 @@ collections:
   devnet_associate:
     output: true
   python:
+    order:
+      - variable-and-simple-datatypes.md
+      - introducing-lists.md
+      - working-with-list.md
+      - if-statements.md
+      - dictionaries.md
+      - user-input-and-while-loop.md
+      - functions.md
+      - classes.md
+      - files-and-exceptions.md
+      - testing-your-code.md
     output: true
