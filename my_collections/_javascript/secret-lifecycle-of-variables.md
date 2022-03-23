@@ -32,10 +32,11 @@ Every identifier is _created_ at the begining of the scope it belongs to, **ever
 The variable being visible from the begining of its enclosing scope, even though declaration may appear further down in the scope, is called **hoisting.**
 
 But how does the variable greeting have any value (the function reference) assigned to it, from the moment the scope starts running? <br>
-The answer is a special characterstics of formal function declarations, called _function hoisting_.<br>
+The answer is a special characterstics of formal function declarations, called **function hoisting**.
+
 When a function declaration's name identifier is registered at the top of its scope, it's additionally auto-initailized to that function's reference. That's why the function can be called throughout the entire scope!
 
-One key detail is that both _function hoising_ and _variable hoisting_ attach their name identifiers to the nearest enclosing **function scope** (or, if none, the global scope), not a block scope.
+One key detail is that both **function hoisting** and **variable hoisting** attach their name identifiers to the nearest enclosing **function scope** (or, if none, the global scope), not a **block scope**.
 
 > Note
 >
@@ -43,7 +44,7 @@ One key detail is that both _function hoising_ and _variable hoisting_ attach th
 
 ##### Hoisting: Declaration vs. Expression
 
-_Function hoisting_ only applies to formal function declarations, not to function expression assignments.
+**Function hoisting** only applies to formal function declarations, not to function expression assignments.
 
 <pre>
 <code>
@@ -55,3 +56,13 @@ _Function hoisting_ only applies to formal function declarations, not to functio
     };
 </code>
 </pre>
+
+**greeting();** throws and error. A **TypeError** means we're trying to do something with a value that is not allowed.
+
+Depending on your **JS environment**, the error message would say something like, **"'undefined' is not a function,"** or helpfully, **"'greeting is not a function.'"**
+
+> Note:
+>
+> The above error is **not** a **RefernceError**. JS isn't telling us that it couldn't find **greeting** as an identifier in the scope. It's telling us that **greeting** was found but doesn't hold a function reference at that moment. Only fucntion can be invoked, so attempting to invoke non-function value results in an error.
+
+**But what does greeting hold, if not the function reference?**

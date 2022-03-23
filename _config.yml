@@ -73,6 +73,12 @@ collections_dir: my_collections
 
 collections:
   javascript:
+    order:
+      - whats-the-scope.md
+      - illustrating-lexical-scope.md
+      - the-scope-chain.md
+      - around-the-global-scope.md
+      - secret-lifecycle-of-variables.md
     output: true
   django:
     output: true
@@ -90,4 +96,6 @@ collections:
       - classes.md
       - files-and-exceptions.md
       - testing-your-code.md
+    output: true
+  vuejs:
     output: true
