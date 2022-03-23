@@ -66,3 +66,5 @@ Depending on your **JS environment**, the error message would say something like
 > The above error is **not** a **RefernceError**. JS isn't telling us that it couldn't find **greeting** as an identifier in the scope. It's telling us that **greeting** was found but doesn't hold a function reference at that moment. Only fucntion can be invoked, so attempting to invoke non-function value results in an error.
 
 **But what does greeting hold, if not the function reference?**
+
+
