@@ -16,25 +16,27 @@ The answers to questions like these take the form of well-defined rules called s
 
 My focus will be on the scope system and it's fucntion closures, as well as the power of the module design pattern.
 
-_At first, It's important to know how JS engine process our program before it runs._
+**At first, It's important to know how JS engine process our program before it runs.**
 
-JS is typically classified as an interpreted scripting language, so its assumed that JS programs are processed in a single, top-down pass. But JS is in fact parsed/compiled in a seprate phase before execution begins. The code author's decisions on where to place variables, functions, and blocks with respect to each other are analyzed according to rules of scope, during initial parsing/compilation phase. The resulting scope structure is generally unaffected by runtime conditions.
+JS is typically classified as an **interpreted scripting language**, so its assumed that JS programs are processed in a single, top-down pass. But JS is in fact **parsed/compiled** in a **seprate phase** before **execution begins**.
 
-JS function are themselves first-class values, they can be assigned and passed around like number or strings. But since these functions hold and access variables, they maintain their original scope no matter where in the program the function are eventually executed. This is called closure.
+The code author's decisions on where to place variables, functions, and blocks with respect to each other are analyzed according to rules of scope, during **initial parsing/compilation phase**. The resulting scope structure is generally unaffected by runtime conditions.
 
-Modules are a code organization pattern characterized by public methods that have privileged access (via closure) to hidden variables and functions in the internal scope of the module.
+JS function are themselves **first-class values**, they can be assigned and passed around like number or strings. But since these functions hold and access variables, they maintain their **original scope** no matter where in the program the function are eventually executed. This is **called closure**.
+
+**Modules** are a code organization pattern characterized by public methods that have privileged access (via **closure**) to hidden variables and functions in the internal scope of the module.
 
 #### 1. Compiled vs. Interpreted
 
 Code compilation is a set of steps that process the text of your code and turn into a list of instructions the computer can understand. Typically, the whole source code is transformed at once, and those resulting instructions are saved as output (usually in a file) that can be later executed.
 
-So how is code interpreted different from code being compiled?
+**So how is code interpreted different from code being compiled?**
 
 Interpretation performs similar task to compilation, in that it transforms your program into machine-understandable instructions. But the processing model is different. Unlike a
-program being compiled all at once, with interpretation the source code is transformed line by line; each line or statement is executed before immediately proceeding to processing the
+program being compiled all at once, with interpretation the source code is transformed **line by line**; each line or statement is executed before immediately proceeding to processing the
 next line of the source code.
 
-Are these two processing models mutually exclusive? Generally, yes. However, Modern JS engines actually employ numerous variations of both compilation and interpretation in handling JS programs.
+Are these two processing models mutually exclusive? Generally, yes. However, Modern JS engines actually employ numerous variations of both **compilation and interpretation** in handling JS programs.
 
 #### 2. Compiling Code ( Why does it even matter whether JS is compiled or not? )
 
@@ -42,7 +44,7 @@ Scope is primarily determined during compilation, so understanding how compilati
 
 In classic compiler theory, a program is processed by a compiler in three basic stages:
 
-- Tokenizing/Lexing:
+- **Tokenizing/Lexing**:
 
   Breaking up a string of characters into meaningful chunks, called tokens.
 
@@ -51,14 +53,14 @@ In classic compiler theory, a program is processed by a compiler in three basic 
 
   ( The difference between tokenizing and lexing is subtle and academic, but it centers on whether or not these tokens are identified in a stateless or stateful way. Simply, if the tokenizer were to invoke stateful parsing rules to figure out whether **a** should be consider a distinct token or just another part of another token, that would be lexing )
 
-- Parsing:
+- **Parsing**:
 
   Taking a stream ( array )of tokens and turning it into tree of nested elements, which collectively represent grammatical structure of the program. This is called an Abstract Syntax Tree (AST).
 
   For example:
   **The tree for var a = 2; might start with a top-level node called VariableDeclaration, with child node called Identifier ( whose value is a), and another child called AssignmentExpression which itself has a child AssignmentExpression which itself has a child Numeric Literals ( whose value is 2 ).**
 
-- Code Generation:
+- **Code Generation**:
 
   Taking AST and turning into executable code. This part varies greatly depending on the language. The JS engine takes the just described AST for var a = 2; and turns it into a set of machine instructions to actually create a variable called **a** ( including reserving memory, etc ), and then store a value into a.
 
@@ -68,7 +70,7 @@ JS compilation doesn't happen in a build step ahead of time, as with other langu
 
 ##### **Required: Two Phases**
 
-Important observation we can make about processing of JS programs is that it occur in (at least) two phases: parsing/compilation first, then execution. While JS specification doesnot require "compilation" explicitly, it requires behavior that is essentially only practical with a compile-then-execution approach.
+Important observation we can make about processing of JS programs is that it occur in (at least) two phases: parsing/compilation first, then execution. While JS specification doesnot require "compilation" explicitly, it requires behavior that is essentially only practical with a **compile-then-execution approach**.
 
 There are three program characterstics you can observe to prove this: **syntax errors, early errors, and hoisting.**
 
@@ -86,7 +88,7 @@ There are three program characterstics you can observe to prove this: **syntax e
   </code>
   </pre>
 
-  This program produces no output but instead throws a SyntaxError about the unexpected . token right before "Hi" string. Since the syntax error happens after the well-formed console.log(..) statement, if JS was executing top-down line by line, one would expect "Hello" message being printed before the syntax error being thrown. That doesn't happen.
+  This program produces no output but instead throws a **SyntaxError** about the unexpected **.** token right before "Hi" string. Since the syntax error happens after the well-formed console.log(..) statement, if JS was executing top-down line by line, one would expect "Hello" message being printed before the syntax error being thrown. That doesn't happen.
 
   **In fact, the only way the JS engine could know about the syntax error on the third line, before executing the first and second line, is by the JS engine first parsing entire program before any of it is executed.**
 
@@ -113,9 +115,9 @@ There are three program characterstics you can observe to prove this: **syntax e
 
   **But how does the JS engine know that greeting parameter has been duplicated?**
 
-  _How does it know that saySomething(..) function is even in strict-mode while processing the parameter list ( the "use-strict" pragma apears only later, in the function body? )_
+  How does it know that **saySomething(..)** function is even in **strict-mode** while processing the parameter list ( the **"use-strict"** pragma apears only later, in the function body? )
 
-  _Again, the only reasonable explanation is that the code must first be fully parsed before any execution occurs._
+  Again, the only reasonable explanation is that the code must first be **fully parsed** before any execution occurs.
 
 - **Hoisting**
 
@@ -136,15 +138,15 @@ There are three program characterstics you can observe to prove this: **syntax e
   </code>
   </pre>
 
-  The noted ReferenceError occurs from the line with the statement greeting = "Howdy". What's happening here is that the greeting variable for that statement belongs to the declaration on the next line, let greeting = "Hi", rather than to the previous var greeting = "Hello" statement.
+  The noted **ReferenceError** occurs from the line with the statement greeting = "Howdy". What's happening here is that the **greeting variable** for that statement belongs to the declaration on the next line, **let greeting = "Hi"**, rather than to the previous **var greeting = "Hello" statement**.
 
   The only way JS could know, at the line where the error is thrown, that the next statement would create block-scoped variable of the same name (greeting) is if the JS engine had processed this code in an early pass, and already set up all the scopes and their variable associations. **This processing of scope and declarations can only accurately be accomplished by parsing the program before execution**
 
-  The RefrenceError here technically comes from greeting = "Howdy" accesing the greeting variable **too early**, a conflict reffered as the Temporal Dead Zone ( TDZ ).
+  The **RefrenceError** here technically comes from greeting = "Howdy" accesing the greeting variable **too early**, a conflict reffered as the **Temporal Dead Zone ( TDZ )**.
 
-##### Warning
-
-It's often asserted that let and const declaration are not hoisted, as an explanation of the TDZ behavior just illustrated. But this is not accurate.
+> Warning
+>
+> It's often asserted that let and const declaration are not hoisted, as an explanation of the TDZ behavior just illustrated. But this is not accurate.
 
 **Now I am convinced that JS programs are parsed before any execution begins. But does it prove they are compiled?**
 
@@ -184,7 +186,7 @@ With awareness of the two-phase processing of a JS program ( compile, then execu
 </code>
 </pre>
 
-Other than declarations, all occurences of variables/identifiers in a program serve in one of two "roles": either they're the target of an assignment or they're source of a value.
+Other than declarations, all occurences of **variables/identifiers** in a program serve in one of two "roles": either they're the **target of an assignment or they're source of a value**.
 
 **How to know if a variable is target or source?** Check if there is a value that is being assigned to it; if so, it's a target. If not, then the variable is a source.
 
@@ -196,15 +198,16 @@ What makes variable target? Consider:
 
 **students = [ // ..** This statement is clearly an assignment operation; the **var students** part is handled entirely as a declartion at compile time. Same with the **nextStudent** = getStudentName(73) statement.
 
-Similary, target assignment operations perhaps less obvious are for (let **student** in students) {. This statement assigns a value to student for each itteration of the loop. Another target refrence getStudentName(73), the argument 73 is assigned to the parameter **studentID**.
+Similary, **target assignment** operations perhaps less obvious are for (let **student** in students) {. This statement assigns a value to student for each itteration of the loop. Another target refrence getStudentName(73), the argument 73 is assigned to the parameter **studentID**.
 
-Last (subtle) target reference **function getStudentName(studentID) {**. A function declaration is a special type of a target refrence. You can think of it like **var getStudentName = function(studentID)**, but that's not exactly accurate. An identifier **getStudentName** is declared ( at compile time ), but the **= function(studentID)** is also handled at compilation.
+Last (subtle) target reference **function getStudentName(studentID) {**. A function declaration is a special type of a **target refrence**. <br>
+You can think of it like **var getStudentName = function(studentID)**, but that's not exactly accurate. An identifier **getStudentName** is declared ( at compile time ), but the **= function(studentID)** is also handled at compilation.
 
 The association between **getStudentName and the function** is automatically set up at the beginning of the scope rather than waiting for an **=** assignment statement to be executed.
 
 > Note
 >
-> This automatic association of function and variable is referred to as “function hoisting”
+> This automatic association of function and variable is referred to as **"function hoisting"**
 
 ##### Sources
 
@@ -220,7 +223,7 @@ In for (let student of **students**), students is a source reference. In stateme
 
 Scope is determined as the program is compiled, and should not generally be affected by runtime conditions. However, in non-strict-mode, there are technically still two ways to cheat this rule, modifying a program’s scopes during runtime.
 
-_Neither of these techniques should be used—they’re both dangerous and confusing._
+**Neither of these techniques should be used—they’re both dangerous and confusing.**
 
 <pre>
 <code>

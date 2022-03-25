@@ -105,7 +105,9 @@
         white-space: pre;
         code {
           color: #0c5176;
-          overflow: scroll;
+          overflow: auto;
+          white-space: pre;
+          word-wrap: normal;
         }
       }
       h4 {
