@@ -352,4 +352,176 @@ What about other for-loops forms?
 </code>
 </pre>
 
-Same thing with **for .. in** and **for .. if** loops: the declared variable is treated inside the loop body, and thus handled per iteration.
+Same thing with **for .. in** and **for .. if** loops: the declared variable is treated inside the loop body, and thus handled per iteration (per scope instance).
+
+Let's explore how **const** impacts these looping constructs.
+
+<pre>
+<code>
+    var keepGoing = true;
+    while (keepGoing) {
+      // ooo, a shiny constant!
+      const value = Math.random();
+      if (value > 0.5) {
+          keepGoing = false;
+      }
+    }      
+</code>
+</pre>
+
+Just like the **let**, **const** is being run exactly once within each loop iteration, so its safe from "re-declaration" troubles.
+
+**for .. in** and **for .. of** are fine to use with const:
+
+<pre>
+<code>
+    for (const index in students) {
+      // this is fine
+    }
+
+    for(const student of students) {
+      //this is also fine
+    }
+</code>
+</pre>
+<pre>
+<code>
+    <strong>But not the general for-loop:</strong>
+    for (const i = 0; i < 3; i++) {
+      // oops, this is going to fail with
+      // a Type Error after the first iteration
+    }
+</code>
+</pre>
+
+What's wrong here?<br>
+Our **i** is indeed just created once inside the loop. The problem is the conceptual **i** that must be incremented each time with **i++** expression. That's **re-assignment**, which isn't allowed for constant.
+
+The straightforward answer is: const can’t be used with the classic for-loop form because of the required re-assignment.
+
+#### 4. Uninitialized Variables (aka, TDZ)
+
+With **var** declarations, the variable is **"hoisted"** to the top of its scope. But it's also automatically initialized to the **undefined** value, so that the variable can be used throughout the entire scope.
+
+However, **let** and **const** declarations are not quite the same in this respect.
+
+<pre>
+<code>
+    console.log(studentName);
+    // ReferenceError
+
+    let studentName = "Suzy";
+</code>
+</pre>
+
+Let's try this;
+
+<pre>
+<code>
+    studentName = "Suzy"; // let's try to initialize it!
+    // ReferenceError
+
+    console.log(studentName);
+
+    let studentName;
+</code>
+</pre>
+
+We still get the **ReferenceError**, For **let/const**, the only way to do so is with an assignment attached to a declaration statement. An assignment by itself is insufficient! Consider:
+
+<pre>
+<code>
+    let studentName = "Suzy";
+    console.log(studentName);   // Suzy
+</code>
+</pre>
+
+Here, we initializing the **studentName** by way of the let declaration statement from that's coupled with an assignment.
+
+Alternatively:
+
+<pre>
+<code>
+    // ...
+
+    let studentName;
+    // or:
+    // let studentName = undefined;
+
+    // ..
+
+    studentName = "Suzy";
+    
+    console.log(studentName);
+    // Suzy
+</code>
+</pre>
+
+> Note:
+>
+> **var studentName;** is not the same as **var studentName = undefined;** but with **let**, they behave the same. The difference comes down to the fact that **var studentName** automatically initializes at the top of the scope, where **let studentName** does not.
+
+So, if we analyze what's going on here, we see that an additional nuanceis that **Compiler** is also adding an instruction in the middle of the program, at the point where the variable **studentName** was declared, to handle that declaration's auto initialization. We cannot use the variable at any point prior to that initialization occuring. The same goes for **cosnt/let**
+
+The term coined by **TC39** to refer to this **period of time** from the entering of a scope to where the auto-initialization of the variable occurs is: **Temporal Dead Zone (TDZ)**.
+
+The **TDZ** is the time window where a variable exists but is still uninitialized, and therefore cannot be accessed in any way. Only the execution of the instruction left by **Compiler** at the point of the original declaration can do that initialization. After that, the **TDZ** is done, and the variable is free to be used for the rest of the scope.
+
+Only **let** and **const** have an observable TDZ. A **var** also has technically has a **TDZ**, but it's zero in length and thus unobservable to our programs!
+
+**"temporal"** in TDZ does indeed refer to **time not position in code**. Consider:
+
+<pre>
+<code>
+    askQuestion();
+    // ReferenceError
+
+    let studentName = "Suzy";
+
+    function askQuestion() {
+        console.log(`${ studentName }, do you know?`);
+    }
+</code>
+</pre>
+
+Even though positionally the **console.log(..)** reference **studentName** comes after the **let studentName** declaration, timing wise the **askQuestion()** function is invoked **before** the **let** statement is encountered, while **studentName** is still in its **TDZ!** Hence the error.
+
+There's a common misconception that **TDZ** means **let** and **const** do not hoist. This is an inaccurate, or at least slightly misleading, claim. They defintely **hoist**.
+
+The actual difference is that **let/const** declarations do not automatically initialize at the begining of the scope, the way var does. Auto-registration of a variable at the top of the scope and auto-initialization at the top of the scope (to undefined) are distinct operations and shouldn't be lumped together under the single term **"hoisting"**.
+
+We've already seen that **let** and **const** don't auto-initialize at the top of the scope. But let's prove that **let** and **const** do hoist.
+
+<pre>
+<code>
+    var studentName = "Kyle";
+
+    {
+        console.log(studentName);
+        // ???
+
+        // ..
+
+        let studentName = "Suzy";
+
+        console.log(studentName);
+        // Suzy
+    }
+</code>
+</pre>
+
+So to summarize, **TDZ** errors occur because **let/const** declarations do **hoist** their declarations to the top of their scopes, but unlike **var**, they defer the auto-initialization of their variables until the moment in the codes's sequencing where the original declaration appeared.
+
+**How can we avoid TDZ errors?**
+
+My advice: always put your **let** and **const** declarations at the top of any scope. Shrink the **TDZ** window to zero length, and the it'll be moot.
+
+#### 5. Finally Initialized
+
+**Hoisting, (re)declaration, and the TDZ** are common sources of confusion for developers, especially those who have worked in other languages before comming to JS.
+
+Hoisting is generally cited as an explicit mechanism of the JS engine, but it's really more metaphor to describe the various ways JS handles variable declarations during compilation. It offers useful structure for thinking about the life-cycle of a variabe - when its created, when its available to use, when it goes away.
+
+Declaration and re-declaration of variables tend to cause confusion when thought of as runtime operations. But if we shift to compile-time thinking for these operations, the quirks and shadows diminish.
+
+The TDZ (temporal dead zone) error is strange and frustrating when encountered. Fortunately, TDZ is relatively straightforward to avoid if you’re always careful to place **let/const** declarations at the top of any scope.
