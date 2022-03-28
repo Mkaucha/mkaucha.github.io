@@ -447,3 +447,352 @@ We should look and plan for the direct, concrete effects closure has on our prog
 Since **closure** is inherently tied to a function instance, its closure over a variable lasts as long as there is still a reference to that function.
 
 **Closure** can unexpectedly prevent the GC of a variable that you’re otherwise done with, which leads to run-away memory usage over time. That’s why it’s important to discard function references (and thus their closures) when they’re not needed anymore.
+
+Consider:
+
+<pre>
+<code>
+  function manageBtnClickEvents(btn) {
+    var clickHandlers = [];
+
+    return function listener(cb){
+      if (cb) {
+        let clickHandler = 
+          function onClick(evt){
+            console.log("clicked!")
+            cb(evt);
+          };
+        clickHandlers.push(clickHandler);
+        btn.addEventListener(
+          "click",
+          clickHandler
+        );
+      };
+      else {
+        //  passing no callback unsubscribes
+        // all click handlers
+        for (let handler of clickHandlers) {
+          btn.removeEventListener(
+            "click",
+            handler
+          );
+        }
+        clickHandlers = [];
+      }
+    };
+  }
+
+  // var mySubmitBtn = ..
+  var onSubmit = manageBtnClickEvents(mySubmitBtn);
+
+  onSubmit(function checkout(evt){
+      // handle checkout
+  });
+
+  onSubmit(function trackAction(evt){
+      // log action to analytics
+  });
+
+  // later, unsubscribe all handlers:
+  onSubmit();
+</code>
+</pre>
+
+In this program, the inner **onClick(..)** function holds a closure over the passed in **cb(the provided event callback).** That means the **checkout()** and **trackAction()** function expression references are held via **closure** (and cannot be GC) for as long as these event handlers are **subscribed**.
+
+When we call **onSubmit()** with no input, all event handlers are unsubscribed, and the **clickHandlers** array is emptied. Once all click handler function references are discarded, the closures of **cb** references to **checkout()** and **trackAction()** are discarded.
+
+When considering the overall health and efficiency of the program, unsubscribing an event handler when it’s no longer needed can be even more important than the initial subscription!
+
+##### Per Variable or Per Scope?
+
+Is the inner **onClick(..)** function closed over only **cb**, or is it also closed over **clickHandler**, **clickHandlers**, and **btn**?
+
+Conceptually, **closure** is **per variable** rather than **per scope**. Ajax callbacks, even handlers, and all other fomrs of fucntion closures are typically assumed to close over only what they explicityly refrence.
+
+But the reality is more complicated than that.
+
+Another program to consider:
+
+<pre>
+<code>
+  function manageStudentGrades(studentRecords) {
+    var grades = studentRecords.map(getGrade);
+
+    return addGrade;
+
+    // ************************
+
+    function getGrade(record){
+      return record.grade;
+    }
+
+    function sortAndTrimGradesList() {
+      // sort by grades, descending
+      grades.sort(function desc(g1, g2){
+        return g2 - g1;
+      });
+
+      // only keep the top 10 grades
+      grades = grades.slice(0, 10);
+    }
+
+    function addGrade(newGrade) {
+      grades.push(newGrade);
+      sortAndTrimGradesList();
+      return grades;
+    }
+  }
+
+  var addNextGrade = manageStudentGrades([
+    { id: 14, name: "Kyle", grade: 86 },
+    { id: 73, name: "Suzy", grade: 87 },
+    { id: 112, name: "Frank", grade: 75 },
+    // ..many more records..
+    { id: 6, name: "Sarah", grade: 91 }
+  ]);
+
+  // later
+
+  addNextGrade(81);
+  addNextGrade(68);
+  // [ .., .., ... ]
+</code>
+</pre>
+
+The outer function **manageStudentGrades(..)** takes a list of student records, and returns an **addGrade(..)** function reference, which we externally label **addNextGrade(..)**. Each time we call **addNextGrade(..)** with a new grade, we get back a current list of the top 10 grades, sorted numerically descending(**sortAndTrimGradesList()**).
+
+From the end of the original **manageStudentGrades(..)** call, and between the multiple **addNextGrade(..)** calls, the **grades** variable is preserved inside **addGrade(..)** via closure; that's how the running list of top **grades** is mantained.
+
+Thats not the only closure involve, however. **addGrade(..)** references **sortAndTrimGradesList**, that means it's also closed over that identifier, which happens to hold the reference to the **sortAndTrimGradesList()** function. That second inner function has to stay around so that addGrade(..) can keep calling it, which also means any variables it closes over stick around.
+
+**getGrade** variable (and its function); is referenced in the outer scope of **manageStudentGrades(..)** in the **.map(getGrade)** call. But its not referenced in **addGrade(..)** or **sortAndTrimGradesList()**.
+
+If **studentRecords** is closed over, the array of student records is never getting GC’d, which leads to this program holding onto a larger amount of memory than we might assume. But if we look closely again, none of the inner functions reference **studentRecords**.
+
+According to the **per variable** definition of **closure**, since **getGrade** and **studentRecords** are not referenced by the inner functions, they’re not closed over. They should be freely available for **GC** right after the **manageStudentGrades(..)** call completes.
+
+But how reliable is the observation as proof? Consider this program:
+
+<pre>
+<code>
+  function storeStudentInfo(id, name, grade) {
+    return function getInfo(whichValue){
+      // warning:
+      // using `eval(..)` is a bad idea!
+      var val = eval(whichValue);
+      return val;
+    };
+  }
+  var info = storeStudentInfo(73, "Suzy", 87);
+
+  info("name");
+  // Suzy
+
+  info("grade");
+  // 87
+</code>
+</pre>
+
+The inner function **getInfo(..)** is not explicitly closed over any of **id, name, or grade** variables. And yet, calls to **info(..)** seem to still be able to access the variables, use fo the **eval(..)** lexical scope cheat.
+
+Many modern JS engine do apply an optimization that removes any variables from a closure scope that aren't explicitly referenced. However, as we see with **eval(..)**, there are situations where such an optimization cannot be applied, and the closure scope continues to contain all its original variables.
+
+In cases where a variable holds a large value (like an object or array) and that variable is present in a closure scope, if we don't need that value anymore and don't want that memory held, it's safer to manually discard the value rather than relying on closure optimization/GC.
+
+Let’s apply a fix to the earlier **manageStudentGrades(..)** example to ensure the potentially large array held in **studentRecords** is not caught up in a closure scope unnecessarily:
+
+<pre>
+<code>
+  function manageStudentGrades(studentRecords) {
+    var grades =  studentRecords.map(getGrade);
+
+    // unset `studentRecords` to prevent unwanted
+    // memory retention in the closure
+    studentRecords = null;
+
+    return addGrade;
+    // ..
+  }
+</code>
+</pre>
+
+We're not removing **studentRecords** from the closure scope; that we cannot control. We're ensuring that even if **studentRecords** remains in the closure scope, that variable is no longer referencing the potentially large array of data; the array can be GC'd.
+
+The takeaway: it's important to know where closures appear in our programs, and what variables are included. We should manage these closures carefully so we're only holding onto what's minimally needed and not wasting memory.
+
+<!-- #### 3. An alternative Perspective
+
+Let's recall a code example from earlier in this chapter.
+
+<pre>
+<code>
+  // outer/global scope: RED(1)
+
+  function adder(num1) {
+    // function scope: Blue(2)
+
+    return function addTo(num2) {
+      // function scope: Green(3)
+
+      return num1 + num2;
+    };
+  }
+
+  var add10To = adder(10);
+  var add42To = adder(42);
+
+  add10To(15);     // 25
+  add42To(9);     //51
+</code>
+</pre>
+
+Our current perspective suggests that whatever a function is passed and invoked, closure preserves a hidden link back to the originl scope to facilitate the access to the closed-over variables.
+
+![closure example](/assets/images/closure.png "Visualizing Closures")
+
+But there's another way of thinking about closure, and more precisely the nature of functions being passed around.
+
+This alternative model de-emphasizes "functions as first-class values," and instead embraces how functions (like all non-primitive values) are held by **reference in JS**, and assigned/passed by reference-copy.
+
+Insted of thinking about the inner function instance of **addTo(..)** moving to the outer **RED(1)** scope via the **return** and assignment, we can envision that function instances actually just stay in place in their own scope environment, of course with their scope-chain. -->
+
+#### 3. Why Closure?
+
+Let's explore some ways it can improve the code structure and organization of an program.
+
+Imagine we have a button on a page that when clicked, should retrieve and send some data via an Ajax request.<br>
+Without using closure:
+
+<pre>
+<code>
+  var APIendpoints = {
+    studentIDs:
+      "https://some.api/register-students",
+      // ..
+  };
+
+  var data = {
+    studentIDs: [14, 73, 112, 6],
+    // ..
+  };
+
+  function makeRequest(evt) {
+    var btn = evt.target;
+    var recordKind = btn.dataset.kind;
+    ajax(
+      APIendpoints[recordKind],
+      data[recordKind]
+    );
+  }
+
+  // < button data-kind="studentIDs">
+  //  Register Students
+  // </ button>
+  btn.addEventListner("click", makeRequest);
+</code>
+</pre>
+
+The **makeRequest(..)** utility only receives an **evt** object from a click event. From there, it has to retrieve the **data-kind** attribute from the target button element, and use that value to lookup both a URL for the API endpoint as well as what data should be included in the AJAX request.
+
+This works OK, but it’s unfortunate (inefficient, more confusing) that the event handler has to read a DOM attribute each time it’s fired.
+
+<pre>
+<code>
+  var APIendpoints = {
+    studentIDs:
+      "https://some.api/register-students",
+      // ..
+  };
+
+  var data = {
+    studentIDs: [14, 73, 112, 6];
+    // ..
+  };
+
+  function setupButtonHandler(btn) {
+    var recordKind = btn.dataset.kind;
+    btn.addEventListner(
+      "click",
+      function makeRequest(evt){
+        ajax(
+          APIendpoints[recordKind],
+          data[recordKind]
+        );
+      }
+    );
+  }
+
+  // < button data-kind="studentIDs">
+  // Register Students
+  // </ buttons>
+
+  setupButtonHandler(btn);
+</code>
+</pre>
+
+With the setupButtonHandler(..) approach, the data-kind attribute is retrieved once and assigned to the record-Kind variable at initial setup. recordKind is then closed over by the inner makeRequest(..) click handler, and its value is used on each event firing to look up the URL and data that should be sent.
+
+**Closure** lets the inner **makeRequest()** function instance remember this variable and access whenever it's needed.
+
+We could have looked up both the URL and data once, at setup:
+
+<pre>
+<code>
+  function setupButtonHandler(btn) {
+    var recordKind = btn.dataset.kind;
+    var requestURL = APIendpoints[recordKind];
+    var requestData = data[recordKind];
+
+    btn.addEventListener(
+      "click",
+      function makeRequest(evt){
+        ajax(requestURL, requestData);
+      }
+    );
+  }
+</code>
+</pre>
+
+Now **makeRequest(..)** is closed over requestURL and requestData, which is a little bit cleaner to understand, and
+also slightly more performant.
+
+We can further improve the preceding code:
+
+<pre>
+<code>
+  function defineHandler(requestURL, requestData) {
+    return function makeRequest(evt){
+      ajax(requestURL, requestData);
+    };
+  }
+
+  function setupButtonHandler(btn) {
+    var recordKind = btn.dataset.kind;
+    var handler = defineHandler(
+      APIendpoints[recordKind],
+      data[recordKind]
+    );
+    btn.addEventListener("click", handler);
+  }
+</code>
+</pre>
+
+The requestURL and requestData inputs are provided ahead of time, resulting in the makeRequest(..) partially applied function, which we locally label handler. When the event eventually fires, the final input (evt, even though it’s ignored) is passed to handler(), completing its inputs and triggering
+the underlying Ajax request.
+
+Behavior-wise, this program is pretty similar to the previous one, with the same type of closure. But by isolating the creation of makeRequest(..) in a separate utility (defineHandler(..)), we make that definition more reusable across the program. We also explicitly limit the closure scope to only the two variables needed.
+
+#### 4. Closer to Closure
+
+We explored two models for mentally tackling closure:
+
+- **Observational**: Closure is a function instance remembering its outer variables even as that function is passed to and invoked in other scopes.
+
+- **Implementational**: Closure is a function instance and its scope environment preserved in-place while any references to it are passed around and invoked from other scopes.
+
+Summarizing the benifits to our programs:
+
+- **Closure** can improve efficiency by allowing a function instance to remember previously determined information instead of having to compute it each time.
+
+- **Closure** can improve code readability, bounding scope exposure by encapsulating variable(s) inside function instances, while still making sure the information in those variables is accessible for future use. The resultant narrower, more specialized function instances are cleaner to interact with, since the preserved information doesn’t need to be passed in every invocation.
