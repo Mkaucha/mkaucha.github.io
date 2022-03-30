@@ -79,6 +79,18 @@
 
   &__content {
     padding: 30px;
+    img {
+      max-width: 100%;
+      display: block;
+      margin: 0 auto;
+
+      & + em {
+        color: $primary;
+        display: block;
+        text-align: center;
+        margin-bottom: 35px;
+      }
+    }
     &-head {
       border-bottom: 1px solid rgba(0, 0, 0, 0.125);
       margin-bottom: 1rem;

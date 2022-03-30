@@ -23,6 +23,7 @@ title: Blogs
                         <button class="tablinks btn btn-primary" onclick="openBlog(event, 'Javascript')" >Javascript</button>
                         <button class="tablinks btn btn-primary" onclick="openBlog(event, 'Django')">Django</button>
                         <button class="tablinks btn btn-primary" onclick="openBlog(event, 'Vuejs')">Vuejs</button>
+                        <button class="tablinks btn btn-primary" onclick="openBlog(event, 'SQL')">SQL</button>
                     </div>
                 </div>
                 <div class="col-md-12">
@@ -115,6 +116,27 @@ title: Blogs
                             <a href="{{ doc.url }}">
                                 <div class="card">
                                     <img src="/assets/images/vuejs.jpg" alt="...">
+                                    <div class="card-body">
+                                        <span>{{ doc.categories | join: ' '}}</span> - <em>July 2, 2022</em>
+                                        <h5>{{ doc.title }}</h5>
+                                        <p>{{ doc.excerpt | strip_html | strip_newlines | truncate: 156}}</p>
+                                        <!-- <h6>Author: {{ document.author }}</h6> -->
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+
+                <div id="SQL" class="tabcontent">
+                    <div class="row">
+                        {% for doc in site.SQL %}
+                        <div class="col-md-4 blog__wrap-block">
+                            <a href="{{ doc.url }}">
+                                <div class="card">
+                                    <img src="/assets/images/sql.png" alt="...">
                                     <div class="card-body">
                                         <span>{{ doc.categories | join: ' '}}</span> - <em>July 2, 2022</em>
                                         <h5>{{ doc.title }}</h5>
