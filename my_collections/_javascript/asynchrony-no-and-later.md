@@ -359,4 +359,78 @@ As applied to JavaScript's behavior, this function-ordering nondeterminism is th
 >
 > If there was a function in JS that somehow did not have **run-to-completion behavior**, we could have many more possible outcomes.
 
+#### 7. Concurrency
+
+Let's imagine a site that displays a list of status updates (like a social network news feed) that progressively loads as the user scrolls down the list. To make such a feature work correctly, (at least) two separate "processes" will need to be
+executing simultaneously (i.e., during the same window of time, but not necessarily at the same instant).
+
+The first "process" will respond to onscroll events (making Ajax requests for new content) as they fire when the user has scrolled the page further down. The second "process" will receive Ajax responses back (to render content onto the page).
+
+Obviously, if a user scrolls fast enough, you may see two or more onscroll events fired during the time it takes to get the first response back and process, and thus you're going to have onscroll events and Ajax response events firing rapidly,
+interleaved with each other.
+
+Concurrency is when two or more "processes" are executing simultaneously over the same period, regardless of whether
+their individual constituent operations happen in parallel (at the same instant on separate processors or cores) or not.
+
+###### "Process" 1 (onscroll events):
+
+<pre>
+<code>
+  onscroll, request 1
+  onscroll, request 2
+  onscroll, request 3
+  onscroll, request 4
+  onscroll, request 5
+  onscroll, request 6
+  onscroll, request 7
+</code>
+</pre>
+
+It's quite possible that an onscroll event and an Ajax response event could be ready to be processed at exactly the same
+moment.
+
+<pre>
+<code>
+  onscroll, request 1
+  onscroll, request 2   response 1
+  onscroll, request 3   response 2
+  response 3
+  onscroll, request 4
+  onscroll, request 5
+  onscroll, request 6   response 4
+  onscroll, request 7
+  response 6
+  response 5
+  response 7
+</code>
+</pre>
+
+JS is only going to be able to handle one event at a time, so either onscroll, request 2 is going to happen first or response 1 is going to happen first, but they cannot happen at literally the same moment.
+
+###### Event Loop Queue:
+
+<pre>
+<code>
+  onscroll, request 1   <--- Process 1 starts
+  onscroll, request 2
+  response 1              <--- Process 2 starts
+  onscroll, request 3
+  response 2
+  response 3
+  onscroll, request 4
+  onscroll, request 5
+  onscroll, request 6
+  response 4
+  onscroll, request 7    <--- Process 1 finishes
+  response 6
+  response 5
+  response 7              <--- Process 2 finishes
+</code>
+</pre>
+
+"Process 1" and "Process 2" run concurrently (task-level parallel), but their individual events run sequentially on the event
+loop queue.
+
+The single-threaded event loop is one expression of concurrency
+
 {% endraw %}

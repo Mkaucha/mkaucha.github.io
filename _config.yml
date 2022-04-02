@@ -72,6 +72,8 @@ sass:
 collections_dir: my_collections
 
 collections:
+  calculus:
+    output: true
   javascript:
     output: true
   django:

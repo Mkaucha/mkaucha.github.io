@@ -36,7 +36,7 @@ We can model almost anything using **classes**.
             """Simulate a dog sitting in response to a command"""
             print(f"{self.name} is now sitting.")
         
-        def roll_over():
+        def roll_over(self):
             """Simulate rolling over in response to a command"""
             print(f"{self.name} rolled over!")
 </code>
@@ -48,7 +48,7 @@ By convention, capitalized names refer to **classes** in Python.
 
 A function that's part of a class is a **method**. The **\_\_init\_\_()** method is a special method that Python runs **automatically** whenever we create **new instance** based on the class. This method has two leading underscores and two trailing underscores, a convention that helps prevent Python's default method names from with our method names.
 
-The **self** parameter is required in the **\_\_init\_\_()** method definition, and if must come first before the other parameters. It must be included in the definition because when Python calls this **method** later, the method call will automatically pass the **self** argument.
+The **self** parameter is required in the **\_\_init\_\_()** method definition, and it must come first before the other parameters. It must be included in the definition because when Python calls this **method** later, the method call will automatically pass the **self** argument.
 
 Every method call assocaited with an instance automatically passes **self**, which is **reference to the instance itself**; it gives the individual instance access to the attribute and methods in the class.
 
@@ -76,7 +76,7 @@ We should think a class as a set of instructions for how to make an instance.
             """Simulate a dog sitting in response to a command"""
             print(f"{self.name} is now sitting.")
         
-        def roll_over():
+        def roll_over(self):
             """Simulate rolling over in response to a command"""
             print(f"{self.name} rolled over!")
 
@@ -130,7 +130,7 @@ To call a method, give the name of the instance (in this case, **my_dog**) and t
             """Simulate a dog sitting in response to a command"""
             print(f"{self.name} is now sitting.")
         
-        def roll_over():
+        def roll_over(self):
             """Simulate rolling over in response to a command"""
             print(f"{self.name} rolled over!")
 
@@ -167,7 +167,7 @@ We can create as many instance from a class as we need.
             """Simulate a dog sitting in response to a command"""
             print(f"{self.name} is now sitting.")
         
-        def roll_over():
+        def roll_over(self):
             """Simulate rolling over in response to a command"""
             print(f"{self.name} rolled over!")
 
