@@ -2,7 +2,7 @@
 layout: blogdetail
 author: Milan Kaucha
 title: Application State with Vuex
-categories: Python
+categories: Vuejs
 excerpt_separator: <!--more-->
 ---
 
