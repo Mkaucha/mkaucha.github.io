@@ -243,3 +243,36 @@ The exponent **n** may be any real number, which, of course,includes all rationa
 > log<sub>b</sub>(b<sup>x</sup>) = x
 >
 > b<sup>log<sub>b</sub>x</sup> = x
+
+###### <u>EXAMPLE 4 : Exact values for certain logarithms</u>
+
+1. log<sub>3</sub>9 = log<sub>3</sub>3<sup>2</sup> = 2
+
+2. log<sub>3</sub>3<sup>0.4</sup> = 0.4
+
+###### <u>EXAMPLE 5 : Using the properties of logarithms</u>
+
+1. log<sub>2</sub>6 = log<sub>2</sub>(2 \* 3) = log<sub>2</sub>2 + log<sub>2</sub>3 = 1 + log<sub>2</sub>3
+
+2. log<sub>5</sub>1 / 5 = log<sub>5</sub>1 - log<sub>5</sub>5 = 0 - 1 = -1
+
+3. log<sub>7</sub>√7 = log<sub>7</sub>(7<sup>1/2</sup>) = 1/2log<sub>7</sub>7 = 1/2
+
+4. 3<sup>log<sub>3</sub>8</sup> + 4<sup>log<sub>4</sub>7</sup> = 8 + 7 = 15
+
+###### <u> EXAMPLE 6 : Solving equation with logarithms</u>
+
+x:log<sub>b</sub>y = 2log<sub>b</sub>x + log<sub>b</sub>a.
+
+log<sub>b</sub>y = log<sub>b(</sub>x<sup>2</sup>) + log<sub>b</sub>a<br>
+log<sub>b</sub>(ax<sup>2</sup>)
+
+#### 4. Logarithms to the Base 10
+
+There are two particular bases that are especially important in many applications. They are **10** and **e**, where e is the irrational number approximately equal to 2.718.
+
+Base 10 logarithms were developed for calculational purposes and were great deal for making calculations until the 1970s.Base 10 logarithms are still used in several scientific measurements, and therefore a need still exists for them.
+
+Base e logarithms are used extensively in technical and scientific work; we consider them in detail in the next section.
+
+**Logarithms to the base 10 are called common logarithms.**
