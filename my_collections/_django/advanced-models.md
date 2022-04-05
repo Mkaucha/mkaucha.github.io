@@ -199,4 +199,219 @@ You can attach as many **Manager()** instances to a model as we'd like. For exam
 </code>
 </pre>
 
+> Note:
+>
+> It's often a good idea to be careful in our choice of default manager, in order to avoid a situation where overriding of **get_queryset()** results in an inabilty to retrieve objects we'd like to work with.
+
+#### 4. Model methods
+
+Custom methods on a model add custom row-level functionality to our objects. Whereas managers are intended to to table-wide things, model methods act on a particular model instance which is a valuable technique for keeping business logic in one place - the model
+
+<pre>
+<code>
+  from django.db import models
+
+  class Person(models.Model):
+      first_name = models.CharField(max_length=50)
+      last_name = models.CharField(max_length=50)
+      birth_date = models.DateField()
+
+      def baby_boomer_status(self):
+          """Returns the person's baby-boomer status."""
+          if self.birth_date < datetime.date(1994, 8, 1):
+              return "Pre-boomer"
+          elif self.birth_date < datetime.date(1965, 1, 1):
+              return "Baby boomer"
+          else:
+              return "Post-boomer"
+      
+      def _get_full_name(self):
+          """Returns the person's full name."""
+          return '%s %s' % (self.first_name, self.last_name)
+      full_name = property(_get_full_name)
+</code>
+</pre>
+
+Many methods are automatically given to each model. We can override most of these but some of us we'll almost always want to define:
+
+1. **\_\_str\_\_()**: A python magic method that returns a Unicode representation of any object. This is what Python and Django will use whenever a model instance needs to ve coerced and displayed as a plain string.
+
+2. **get_absolute_url()** : This tells Django how to calculate the URL for an object. Django uses this in its admin interface, and any time it needs to figure out a URL for an object.
+
+##### Overriding predefined model methods
+
+There's another set of model methods that encapsulate a bunch of databasee behavior that we'll want to customize. We're free to override **save()** and **delete()** methods if we want to change the way it works.
+
+A classic use-case for overriding the built-in methods as if something to happen whenever we save an object.
+
+<pre>
+<code>
+  from django.db import models
+
+  class Blog(models.Model):
+      name = models.CharField(max_length=100)
+      tagline = models.TextField()
+
+      def save(self, *args, **kwargs):
+          do_something()
+          super(Blog, self).save(*args, **kwargs) # Call the "real" save() method.
+
+          do_something_else() 
+
+  # Prevent Saving:
+
+  from django.db import models
+
+  class Blog(models.Model):
+      name = models.CharField(max_length=100)
+      tagline = models.TextField()
+
+      def save(self, *args, **kwargs):
+          if self.name == "Yoko Ono's blog":
+              return # Yoko shall never have her own blog!
+          else:
+              super(Blog, self).save(*args, **kwargs) # Call the "real" save() mehtod.
+</code>
+</pre>
+
+It's important to remember to call the superclass method - that's **super(Blog, self).save(\*args, \*\*kwargs)** - to ensure that the object still gets saved into the database.
+
+##### Executing raw SQL queries
+
+When the model query APIs don't go far enough, we can fall back to writting raw SQL. Django provides two ways of performing raw SQL queries:
+
+1. Use **Manager.raw()**
+
+2. Executer custom SQL directly.
+
+> Note:
+>
+> Every time we use raw SQL, we should properly escape any prameters that the user can control by using **params** in order to protect against SQL injection attacks.
+
+#### 5. Performing raw queries
+
+The **raw()** manager method can be used to perform raw SQL queries that return model instances:
+
+<pre>
+<code>
+  Manager.raw(raw_query, params=None, translation=None)
+</code>
+</pre>
+
+This method takes a raw SQL query, executes it, and returns a **djanog.db.models.query.RawQuerySet** instace. The **RawQuerySet** instance can be iterated over just like a normal **QuerySet** to provide object instances.
+
+<pre>
+<code>
+  class Person(models.Model):
+      first_name = models.CharField(...)
+      last_name = models.CharField(...)
+      birth_date = models.DateField(...)
+
+  >>> for p in Person.objects.raw('SELECT * FROM myap_person'):
+  ...     print(p)
+  John Smith
+  Jane Jones
+</code>
+</pre>
+
+##### Mapping query fields to model fields
+
+**raw()** automatically maps fields in the query to fields on the model. The order of fields in our query doen't matter.
+
+<pre>
+<code>
+  >>> Person.objects.raw('SELECT id, first_name,last_name, birth_date FROM myapp_person')
+  ...
+  >>> Person.objects.raw('SELECT last_name, birth_date, first_name, id FROM myapp_person')
+  ...
+</code>
+</pre>
+
+##### Index lookups
+
+**raw()** supports indexing,
+
+<pre>
+<code>
+  >>> first_person = Person.objects.raw('SELECT * FROM myapp_person')[0]
+
+  # Indexing and slicing are not performed at database leve.
+  # It is more efficient to limit the query at the SQL lever.
+
+  >>> first_person = Person.objects.raw('SELECT * FROM myapp_person LIMIT 1')[0]
+</code>
+</pre>
+
+##### Deferring model fields
+
+Fields may also be left out:
+
+<pre>
+<code>
+  >>> people = Person.objects.raw('SELECT id, first_name FROM myapp_person')
+
+  # The person objects returned by this query will be differed model instances.
+  # This means that the fields that are ommited from the query will be loaded on demand.
+
+  >>> for p in Person.objects.raw('SELECT id, first_name FROM myapp_person'):
+  ...     print(p.first_name, # This will be retrieved by the original query
+                p.last_name)  # This will be retrieved on demand
+  John Smith
+  Jane Jones 
+</code>
+</pre>
+
+##### Adding annotations
+
+We can also execute queries containing fields that aren't defined on the model.
+
+<pre>
+<code>
+  >>> people = Person.objects.raw('SELECT *, age(birth_date) AS age FROM myapp_person')
+  >>> for p in people:
+  ...     print("%s is %s." % (p.first_name, p.age))
+  John is 37.
+  Jane is 42.
+</code>
+</pre>
+
+##### Passing parameters into raw()
+
+if we need to perform parameterized queries, we can pass the params argument to **raw()**:
+
+<pre>
+<code>
+  >>> lname = 'Doe'
+  >>> Person.objects.raw('SELECT * FROM myapp_person WHERE last_name = %s', [lname])
+</code>
+</pre>
+
+**params** is a list or dictionary of parameters. You'll use **%s** placeholders in the query string for a list, or **%(key)s** placeholders for a dictionary (where key is replaced by a dictionary key, of course)
+
+> Note:
+>
+> Using the **params** argument completely protects you from **SQL injection** attacks, a common exploit where attackers inject arbitrary SQL into your database. If you use string interpolation, sooner or later you'll fall victim to SQL injection.
+
+#### 6. Executing custom SQL directly
+
+Sometimes even **Manager.raw()** isn't quite enough: we might need to perform queries to directly execute **UPDATE, INSERT, or DELETE** queries.
+
+We can always access the database directly, routing around the model layer entirely.
+
+The object **django.db.connection** represents the default database connection. To use the database connection, call **connection.cursor()** to get a cursor object. Then call **cursor.execute(sql, [params])** to execute the SQL and **cursor.fetchone()** or **cursor.fetchall()** to return the resulting rows.
+
+<pre>
+<code>
+  from django.db import connection
+
+  def my_custom_sql(self):
+      cursor = connection.cursor()
+      cursor.execute("Update bar SET foo = 1 WHERE baz = %s", [self.baz])
+      cursor.execute("SELECT foo FROM bar WHERE baz = %s", [self.baz])
+      row = cursor.fetchone()
+
+      return row
+</code>
+</pre>
+
 {% endraw %}
