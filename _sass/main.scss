@@ -204,11 +204,25 @@
   }
 }
 
+// *********************** Portfolio typography *******************************
+.p_btn {
+  padding: 10px 40px;
+  font-size: 18px;
+  text-transform: uppercase;
+  color: #666;
+  font-weight: 500;
+  border-radius: 50px;
+  i {
+    padding-left: 6px;
+    transition: all 0.2s ease;
+  }
+}
+
 // *********************** Home Section *******************************
 
 section.home {
   position: relative;
-  padding: 50px 0;
+  padding: 80px 0;
   .clip {
     clip-path: polygon(0 0, 12% 0, 20% 100%, 0% 100%);
     background-color: $primary;
@@ -219,11 +233,11 @@ section.home {
     left: 0;
   }
   .content {
-    padding: 100px 80px;
+    padding: 100px 60px;
     h1 {
       text-transform: uppercase;
       color: $primary;
-      font-size: 50px;
+      font-size: 55px;
       font-weight: 700;
       position: relative;
       padding-left: 60px;
@@ -248,22 +262,119 @@ section.home {
       margin-bottom: 24px;
     }
     .btn {
-      padding: 10px 40px;
-      font-size: 18px;
-      text-transform: uppercase;
-      color: #666;
-      font-weight: 500;
-      border-radius: 50px;
       &:hover {
-        color: #ffffff;
         i {
-          transform: translateX(6px);
+          transform: translateX(3px);
         }
       }
-      i {
-        padding-left: 6px;
-        transition: all 0.2s ease;
+    }
+  }
+}
+
+section.about-me {
+  padding: 80px 0;
+  .title {
+    position: relative;
+    margin-bottom: 80px;
+    h2 {
+      text-transform: uppercase;
+      font-size: 50px;
+      font-weight: 700;
+      color: #7e7e7e;
+      span {
+        color: $primary;
       }
     }
+    .bg-text {
+      position: absolute;
+      font-size: 115px;
+      font-weight: 700;
+      color: #7e7e7e;
+      text-transform: uppercase;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      z-index: -1;
+      opacity: 0.1;
+    }
+  }
+  .p_title {
+    h3 {
+      font-size: 32px;
+      color: #7e7e7e;
+      font-weight: 600;
+      margin-bottom: 24px;
+    }
+  }
+  .p_list {
+    ul {
+      display: flex;
+      flex-wrap: wrap;
+      list-style-type: none;
+      padding: 0;
+      li {
+        flex: 0 0 50%;
+        max-width: 50%;
+        margin-bottom: 24px;
+        .title {
+          opacity: 0.6;
+          text-transform: capitalize;
+        }
+        .value {
+          font-weight: 600;
+        }
+      }
+    }
+  }
+
+  .cv_btn {
+    .btn {
+      &:hover {
+        i {
+          transform: translateY(2px);
+        }
+      }
+    }
+  }
+  .card {
+    background-color: $body-bg;
+    padding: 15px 25px;
+    margin-bottom: 24px;
+
+    .card-body {
+      .nums {
+        color: $primary;
+        font-size: 38px;
+        font-weight: 700;
+        sup {
+          font-weight: 500;
+        }
+      }
+      p {
+        text-transform: uppercase;
+        margin-bottom: 0;
+        position: relative;
+        padding-left: 45px;
+        font-size: 18px;
+        opacity: 0.6;
+        &:before {
+          content: "";
+          position: absolute;
+          height: 2.5px;
+          width: 35px;
+          left: 0;
+          top: 25%;
+          transform: translateY(-50%);
+          border-radius: 10px;
+          background: #7e7e7e;
+        }
+      }
+    }
+  }
+}
+
+@media only screen and (max-width: 1399px) {
+  body {
+    font-size: 14px;
   }
 }
