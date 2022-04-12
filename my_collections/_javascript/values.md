@@ -159,3 +159,177 @@ JavaScript **strings** are immutable, while arrays are quite mutable. The correc
   b;          // ["f","O","o","!"]
 </code>
 </pre>
+
+Many of the array methods that could be helpful when dealing with **strings** are not actually available for them, but can "borrow" nonmutation array methods against our string:
+
+<pre>
+<code>
+  a.join;   // undefined
+  a.map;    // undefined
+
+  var c = Array.prototype.join.call(a, "-");
+  var d = Array.prototype.map.call(a, function(v){
+    return v.toUpperCase() + ".";
+  }).join("");
+
+  c;    // "f-o-o"
+  d;    // "F.O.O."
+</code>
+</pre>
+
+Let's take another example: reversing a **string**. **arrays** have a **reverse()** in-place mutator method, but strings do not:
+
+<pre>
+<code>
+  a.reverse;      // undefined
+
+  b.reverse();    // ["!", "o", "O", "f"]
+  b;              // ["!", "o", "O", "f"]
+
+  // Unfortunately, this "borrowing" doesn't work with array mutators,
+  // strings are immutable and thus can't be modified in place
+
+  Array.prototype.reverse.call(a);
+  // still returns a String object wrapper 
+  // for "foo" :(
+</code>
+</pre>
+
+Another workaround is to convert the string into an array, perform the desired operation, then convert it back to string:
+
+<pre>
+<code>
+  var c = a
+    // split `a` into an array of characters
+    .split("")
+    // reverse the array of characters
+    .reverse()
+    // join the array of characters back to a string
+    .join("");
+    
+    c; // "oof"
+</code>
+</pre>
+
+> Note:
+>
+> This approach doesn't work for strings with complex (unicode) characters in them (astral, symbols, multibyte characters, etc).
+
+It's better to just actually store them as arrays rather than as strings, if you are commonly doing tasks on your strings. We can always call join("") on the array of characters whenever we actually need the string representation.
+
+#### Numbers
+
+JavaScript has just one numeric type: **number**. This type includes both **"integer"** vlaues and **fractional decimal numbers**.
+
+In JS, an "integer" is just a value that has no fractional decimal value. That is, 42.0 is as much an "integer" as 42.
+
+Like most modern languages, including practically all scripting languages, the implementation of JavaScript’s numbers is based on the "IEEE 754" standard, often called "floating-point." JavaScript specifically uses the "double precision" format (aka "64-bit binary") of the
+standard.
+
+#### Numeric Syntax
+
+Number literals are expressed in JavaScript generally as base-10 decimal literals.
+
+<pre>
+<code>
+  var a = 42;
+  var b = 42.3;
+
+  // The leading portion of a decimal value, if 0, is optional:
+
+  var a = 0.42;
+  var b = .42;
+
+  // Similary, the trailing portion (the fractional) of a decimal value after the ., if 0, is optional:
+
+  var a = 42.0;
+  var b = 42.;
+
+  // By default, most numbers will be outputted as base-10 decimals, with trailing fractional 0s removed. So:
+  var a = 42.300;
+  var b = 42.0;
+
+  a;    // 42.3
+  b;    // 42
+</code>
+</pre>
+
+Very large or very small numbers will by default be outputted in exponent form, the same as the output of the **toExponential()** method, like:
+
+<pre>
+<code>
+  var a = 5E10;
+  a;                    // 50000000000
+  a.toExponential();    // "5e+10"
+
+  var b = a * a;
+  b;                    // 2.5e+21
+
+  var c = 1 / a;
+  c;                    // 2e-11
+
+</code>
+</pre>
+
+Because number values can be boxed with the **Number** object wrapper, number values can access methods are built into the **Number.prototype**. The **toFixed(..)** method allows you to specify how many fractional decimals places we'd like to be represented with:
+
+<pre>
+<code>
+  var a = 42.59;
+
+  a.toFixed(0);   // "43"
+  a.toFixed(1);   // "42.6"
+  a.toFixed(2);   // "42.59"
+  a.toFixed(3);   // "42.590"
+  a.toFixed(4);   // "42.5900"
+</code>
+</pre>
+
+The output is actually a string representation of the number, and that the value is 0-padded on the righthand side if we ask for more decimals than the value holds.
+
+**toPrecision(..)** is similar, but specifies how many **significant digits** should be used to represent the value:
+
+<pre>
+<code>
+  var a = 42.59;
+
+  a.toPrecision(1); //  "4e+1"
+  a.toPrecision(2); //  "43"
+  a.toPrecision(3); //  "42.6"
+  a.toPrecision(4); //  "42.59"
+  a.toPrecision(5); //  "42.5900"
+</code>
+</pre>
+
+We don't have to use a variable with the value in it to access these methods; we can access these methods directly on **number** literals.
+
+Since **.** is a valid numeric character, it will first be interpreted as part of the number literal, instead of being interpreted as a property accessor:
+
+<pre>
+<code>
+  // invalid syntax:
+  42.toFixed(3);    // SyntaxError
+
+  // these are all valid:
+  (42).toFixed(3);  // "42.000"
+  0.42.toFixed(3);  // "0.420"
+  42..toFixed(3);   // "42.000"
+</code>
+</pre>
+
+**42.toFixed(3)** is invalid syntax, because **.** is swallowed up as part of the **42.** literal and so then there's no **.** property operator present to make the **.toFixed** access.
+
+**42..toFixed(3)** works because the first **.** is part of the number and the second **.** is the property operator.
+
+**number** literals can also be expressed in other bases, like binary, octal, and hexadecimal.
+
+These formats work in current versions of JavaScript:
+
+<pre>
+<code>
+  0xf3; // hexadecimal for: 243
+  0xf3; // ditto
+
+  0363; // octal for: 243
+</code>
+</pre>

@@ -142,7 +142,7 @@ Variables that have no value currently actually have the **undefined** value. Ca
 <code>
   var a;
 
-  type of a;  // "undefined"
+  typeof a;  // "undefined"
 
   var b = 42;
   var c;
