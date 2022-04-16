@@ -414,4 +414,23 @@ The object **django.db.connection** represents the default database connection. 
 </code>
 </pre>
 
+If we want to include **literal percent** signs in the query, we have to **double** them in the case we are passing parameters:
+
+<pre>
+<code>
+  cursor.execute("SELECT foo FROM bar WHERE baz = '30%'")
+  cursor.execute("SELECT foo FROM bar WHERE baz = '30%%' AND id = %s", [self.id])
+</code>
+</pre>
+
+if we are using more than one database, we can use **django.db.connections** to obtain the connection (and cursor) for a specific database. **django.db.connections** is a dictionary-like object that allows us to retrieve a specific connection using its alia:
+
+<pre>
+<code>
+  from django.db import connections
+  cursor = connections['my_db_alias'].cursor()
+  # Your code here ..
+</code>
+</pre>
+
 {% endraw %}
